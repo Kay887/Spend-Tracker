@@ -1,0 +1,2648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CNX">
+<title>CNX — Kay's Financial OS · v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06080b;--s1:#0b0f14;--s2:#0f1520;--s3:#131b27;
+  --b1:#192233;--b2:#1e2c40;
+  --ac:#00c8f0;--ag:rgba(0,200,240,.12);--ag2:rgba(0,200,240,.06);
+  --go:#f0a500;--gd:rgba(240,165,0,.12);
+  --gn:#00d968;--gr:rgba(0,217,104,.1);
+  --rd:#ff3d5a;--rr:rgba(255,61,90,.1);
+  --pu:#9d6fff;--pr:rgba(157,111,255,.1);
+  --or:#ff6a2a;--od:rgba(255,106,42,.1);
+  --t1:#d8e4f0;--t2:#5f7a90;--t3:#2d3f52;
+  --mn:'Space Mono',monospace;--sf:'DM Sans',sans-serif;
+  --rad:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t1);font-family:var(--sf);font-size:14px;min-height:100vh;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,200,240,.003) 3px,rgba(0,200,240,.003) 4px);pointer-events:none;z-index:9999}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+
+/* -- HEADER -- */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--b1);background:rgba(6,8,11,.97);backdrop-filter:blur(20px);position:sticky;top:0;z-index:300}
+.logo{font-family:var(--mn);font-size:18px;font-weight:700;color:var(--ac);letter-spacing:5px;text-shadow:0 0 20px rgba(0,200,240,.5)}
+.logo-sub{font-size:8px;letter-spacing:2px;color:var(--t3);margin-top:1px}
+.hdr-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.phase-tag{font-family:var(--mn);font-size:9px;color:var(--go);background:var(--gd);border:1px solid rgba(240,165,0,.3);padding:4px 10px;border-radius:4px;letter-spacing:1px}
+.hdr-btn{background:var(--ag2);border:1px solid rgba(0,200,240,.2);color:var(--ac);font-family:var(--mn);font-size:9px;padding:5px 11px;border-radius:4px;cursor:pointer;letter-spacing:1px;transition:all .2s}
+.hdr-btn:hover{background:var(--ac);color:#000}
+
+/* -- NAV -- */
+.nav{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--b1);background:var(--s1);position:sticky;top:52px;z-index:299;overflow-x:auto}
+.nb{padding:9px 3px;text-align:center;font-size:8px;font-family:var(--mn);color:var(--t3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.3px;white-space:nowrap;line-height:1.4}
+.nb .ni{font-size:13px;display:block;margin-bottom:2px}
+.nb:hover{color:var(--t2)}
+.nb.on{color:var(--ac);border-bottom-color:var(--ac);background:var(--ag2)}
+
+/* -- LAYOUT -- */
+.main{padding:16px 18px;max-width:1400px;margin:0 auto}
+.tab{display:none;animation:fu .3s ease}
+.tab.on{display:block}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+.mt{margin-top:12px}.mt2{margin-top:16px}
+
+/* -- CARDS -- */
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);padding:15px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--ac),transparent);opacity:.18}
+.ct{font-family:var(--mn);font-size:9px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.ct-l{display:flex;align-items:center;gap:5px}
+.ct-l::before{content:'▸';color:var(--ac);font-size:7px}
+
+/* -- STATS -- */
+.stat{background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);padding:13px}
+.sl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:4px;font-family:var(--mn)}
+.sv{font-family:var(--mn);font-size:19px;font-weight:700;color:var(--ac)}
+.ss{font-size:10px;color:var(--t2);margin-top:2px}
+.stat.go .sv{color:var(--go)}.stat.gn .sv{color:var(--gn)}.stat.rd .sv{color:var(--rd)}.stat.pu .sv{color:var(--pu)}
+
+/* -- INPUTS -- */
+.fl{display:flex;flex-direction:column;gap:3px;margin-bottom:9px}
+.lbl{font-size:10px;color:var(--t2);font-family:var(--mn);letter-spacing:.4px}
+.inp{background:var(--s2);border:1px solid var(--b1);border-radius:6px;padding:8px 10px;color:var(--t1);font-family:var(--sf);font-size:13px;outline:none;width:100%;transition:border-color .2s}
+.inp:focus{border-color:var(--ac);box-shadow:0 0 0 2px var(--ag2)}
+.inp::placeholder{color:var(--t3)}
+select.inp{appearance:none;cursor:pointer}
+.pfx{position:relative}
+.pfx .px{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ac);font-family:var(--mn);font-size:11px;font-weight:700;pointer-events:none}
+.pfx .inp{padding-left:21px}
+
+/* -- BUTTONS -- */
+.btn{padding:8px 15px;border-radius:6px;font-family:var(--mn);font-size:10px;font-weight:700;cursor:pointer;border:none;transition:all .2s;letter-spacing:.4px}
+.btn-p{background:var(--ac);color:#000}.btn-p:hover{background:#33d6ff;transform:translateY(-1px)}
+.btn-o{background:var(--ag2);border:1px solid rgba(0,200,240,.2);color:var(--ac)}
+.btn-d{background:var(--rr);border:1px solid rgba(255,61,90,.2);color:var(--rd)}
+.btn-sm{padding:4px 9px;font-size:9px}
+.btn-go{background:var(--gd);border:1px solid rgba(240,165,0,.3);color:var(--go)}
+
+/* -- PROGRESS -- */
+.pb{height:5px;background:var(--s3);border-radius:3px;overflow:hidden}
+.pbf{height:100%;border-radius:3px;transition:width .6s ease}
+.pb.h8{height:8px}.pb.h10{height:10px}
+
+/* -- TABLE -- */
+.tbl-wrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:11px;min-width:700px}
+.tbl th{font-family:var(--mn);font-size:8px;color:var(--t3);letter-spacing:1px;padding:7px 9px;text-align:right;border-bottom:1px solid var(--b1);text-transform:uppercase;white-space:nowrap;background:var(--s2)}
+.tbl th:first-child{text-align:left;position:sticky;left:0;background:var(--s2);z-index:2}
+.tbl td{padding:9px 9px;border-bottom:1px solid rgba(26,34,51,.5);text-align:right;white-space:nowrap;transition:background .15s}
+.tbl td:first-child{text-align:left;font-family:var(--mn);font-size:10px;font-weight:700;position:sticky;left:0;background:var(--s1);z-index:1}
+.tbl tr:hover td{background:var(--ag2)}
+.tbl tr:hover td:first-child{background:var(--s2)}
+.tbl .tr-total td{background:var(--s2) !important;font-weight:700;border-top:1px solid var(--b2)}
+.tbl .tr-phase td{background:var(--s3) !important;font-family:var(--mn);font-size:8px;color:var(--t3);letter-spacing:1.5px;padding:5px 9px}
+.n{font-family:var(--mn)}.ng{font-family:var(--mn);color:var(--gn)}.nr{font-family:var(--mn);color:var(--rd)}.na{font-family:var(--mn);color:var(--ac)}.ngo{font-family:var(--mn);color:var(--go)}
+
+/* -- BADGE -- */
+.bdg{display:inline-block;padding:2px 7px;border-radius:3px;font-size:9px;font-family:var(--mn);font-weight:700;letter-spacing:.4px}
+.bdg-g{background:var(--gr);color:var(--gn)}.bdg-w{background:var(--gd);color:var(--go)}
+.bdg-r{background:var(--rr);color:var(--rd)}.bdg-b{background:var(--ag);color:var(--ac)}
+.bdg-p{background:var(--pr);color:var(--pu)}
+
+/* -- ALERTS -- */
+.alert{padding:8px 12px;border-radius:6px;font-size:11px;margin-bottom:7px;display:flex;gap:8px;line-height:1.5}
+.al-g{background:var(--gr);border:1px solid rgba(0,217,104,.2);color:#5dffa0}
+.al-w{background:var(--gd);border:1px solid rgba(240,165,0,.2);color:var(--go)}
+.al-r{background:var(--rr);border:1px solid rgba(255,61,90,.2);color:#ff8099}
+.al-b{background:var(--ag);border:1px solid rgba(0,200,240,.2);color:var(--ac)}
+
+/* -- DIVIDER -- */
+.div{height:1px;background:var(--b1);margin:13px 0}
+
+/* -- SECTION HEADER -- */
+.sec-t{font-family:var(--mn);font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px;letter-spacing:.8px}
+.sec-s{font-size:11px;color:var(--t3);margin-bottom:14px;line-height:1.6}
+
+/* -- MONTH STRIP -- */
+.mstrip{display:flex;gap:5px;overflow-x:auto;padding-bottom:5px;margin-bottom:13px}
+.mstrip::-webkit-scrollbar{height:2px}
+.mp{padding:5px 11px;border-radius:5px;font-family:var(--mn);font-size:9px;border:1px solid var(--b1);color:var(--t3);background:none;cursor:pointer;white-space:nowrap;transition:all .2s;letter-spacing:.4px;position:relative}
+.mp:hover{color:var(--t2);border-color:var(--b2)}
+.mp.on{background:var(--ag);border-color:rgba(0,200,240,.35);color:var(--ac)}
+.mp.has::after{content:'•';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);color:var(--ac);font-size:5px}
+
+/* -- TRANSACTIONS -- */
+.tx-list{max-height:320px;overflow-y:auto}
+.tx{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid rgba(26,34,51,.5);animation:fu .2s ease}
+.tx:last-child{border-bottom:none}
+.tx-ic{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:var(--s2)}
+.tx-n{font-size:12px;font-weight:500}
+.tx-d{font-size:9px;color:var(--t3);margin-top:1px;font-family:var(--mn)}
+.tx-a{font-family:var(--mn);font-size:12px;font-weight:700;color:var(--rd)}
+.tx-a.pos{color:var(--gn)}
+.tx-del{background:none;border:none;color:var(--t3);cursor:pointer;font-size:11px;padding:3px;transition:color .2s}
+.tx-del:hover{color:var(--rd)}
+
+/* -- MIND MAP -- */
+.mm-canvas{position:relative;background:var(--s1);border-radius:var(--rad);overflow:hidden;min-height:460px}
+.mm-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.mm-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--ac);color:#000;font-family:var(--mn);font-weight:700;font-size:11px;border-radius:50%;width:80px;height:80px;display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:0 0 32px rgba(0,200,240,.5);z-index:10;letter-spacing:.5px;line-height:1.3}
+.mm-node{position:absolute;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:8px 11px;font-size:9px;font-family:var(--mn);text-align:center;z-index:5;transition:all .3s;min-width:95px;cursor:default}
+.mm-node:hover{transform:scale(1.05);box-shadow:0 0 12px rgba(0,200,240,.15)}
+.mn-l{font-size:7px;color:var(--t3);letter-spacing:1px;margin-bottom:2px}
+.mn-v{font-size:12px;font-weight:700;margin-bottom:1px}
+.mn-p{font-size:8px;color:var(--t2)}
+
+/* -- CC TRACKER -- */
+.cc-card{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:14px;margin-bottom:10px}
+.cc-name{font-family:var(--mn);font-size:10px;color:var(--t3);letter-spacing:1px;margin-bottom:4px}
+.cc-bal{font-family:var(--mn);font-size:20px;font-weight:700;margin-bottom:8px}
+.cc-burn{display:flex;gap:5px;align-items:flex-end;height:60px;margin:10px 0}
+.cc-bar-m{flex:1;background:var(--s3);border-radius:2px 2px 0 0;position:relative;overflow:hidden;cursor:pointer}
+.cc-bar-fill{position:absolute;bottom:0;left:0;right:0;border-radius:2px 2px 0 0;transition:height .5s ease}
+.cc-bar-lbl{font-size:7px;color:var(--t3);font-family:var(--mn);text-align:center;margin-top:3px}
+
+/* -- GOAL -- */
+.goal-big{background:linear-gradient(135deg,rgba(240,165,0,.08),rgba(255,106,42,.06));border:1px solid rgba(240,165,0,.2);border-radius:var(--rad);padding:20px;text-align:center}
+.goal-icon{font-size:40px;margin-bottom:8px}
+.goal-name{font-family:var(--mn);font-size:13px;color:var(--go);letter-spacing:2px;margin-bottom:4px}
+.goal-target{font-size:11px;color:var(--t2);margin-bottom:14px}
+.goal-amt{font-family:var(--mn);font-size:30px;font-weight:700;color:var(--go);margin-bottom:4px}
+.goal-ready{background:var(--gn);color:#000;font-family:var(--mn);font-size:11px;font-weight:700;padding:8px 20px;border-radius:6px;margin-top:12px;display:inline-block;letter-spacing:1px;animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,217,104,.4)}50%{box-shadow:0 0 0 8px rgba(0,217,104,0)}}
+
+/* -- CHART BARS -- */
+.chart-area{display:flex;align-items:flex-end;gap:5px;height:150px;padding:18px 2px 0}
+.cb-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.cb-outer{width:100%;position:relative;overflow:visible}
+.cb-inner{width:100%;border-radius:2px 2px 0 0;position:absolute;bottom:0;left:0;transition:height .7s ease;opacity:.85}
+.cb-inner:hover{opacity:1}
+.cb-lbl{font-size:8px;color:var(--t3);font-family:var(--mn);text-align:center;white-space:nowrap}
+.cb-val{font-size:8px;color:var(--ac);font-family:var(--mn);text-align:center;min-height:11px}
+
+/* -- PRIORITY CARDS -- */
+.p-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.p-card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);padding:13px;transition:border-color .2s}
+.p-card:hover{border-color:var(--b2)}
+.pc-tag{font-family:var(--mn);font-size:8px;letter-spacing:1px;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between}
+.pc-name{font-size:13px;font-weight:600;margin-bottom:2px}
+.pc-tgt{font-size:10px;color:var(--t3);margin-bottom:6px}
+.pc-sv{font-family:var(--mn);font-size:16px;font-weight:700;margin-bottom:5px}
+.pc-foot{display:flex;justify-content:space-between;font-size:9px;color:var(--t2);margin-top:5px}
+.p0{border-top:2px solid var(--gn)}.p1{border-top:2px solid var(--ac)}.p2{border-top:2px solid var(--go)}.p3{border-top:2px solid var(--or)}
+
+/* -- NOTES -- */
+.note-row{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(26,34,51,.4)}
+.note-row:last-child{border-bottom:none}
+.note-m{font-family:var(--mn);font-size:10px;color:var(--t1);flex:0 0 70px;padding-top:2px}
+.note-chk{display:flex;align-items:center;gap:5px;flex:0 0 110px}
+.note-chk input[type=checkbox]{width:13px;height:13px;accent-color:var(--go);cursor:pointer}
+.note-chk label{font-size:10px;color:var(--go);cursor:pointer;font-family:var(--mn)}
+.note-inp{flex:1;background:var(--s2);border:1px solid var(--b1);border-radius:5px;padding:5px 9px;color:var(--t1);font-size:11px;outline:none;transition:border-color .2s;font-family:var(--sf)}
+.note-inp:focus{border-color:var(--go)}
+.note-inp::placeholder{color:var(--t3)}
+.note-inp:disabled{opacity:.3;cursor:not-allowed}
+
+/* -- CF ROWS -- */
+.cf-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(26,34,51,.4)}
+.cf-row:last-child{border-bottom:none}
+.cf-l{flex:0 0 145px;font-size:11px;color:var(--t2)}
+.cf-b{flex:1}
+.cf-v{flex:0 0 80px;text-align:right;font-family:var(--mn);font-size:11px;font-weight:700}
+.cf-p{flex:0 0 34px;text-align:right;font-size:9px;color:var(--t3);font-family:var(--mn)}
+
+/* -- SYNC STATUS -- */
+.sync-dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.sync-dot.online{background:var(--gn);box-shadow:0 0 6px rgba(0,217,104,.6)}
+.sync-dot.syncing{background:var(--ac);animation:pulse-dot .8s ease infinite}
+.sync-dot.offline{background:var(--t3)}
+.sync-dot.error{background:var(--rd);box-shadow:0 0 6px rgba(255,61,90,.5)}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.sync-lbl{font-family:var(--mn);font-size:8px;letter-spacing:.5px}
+
+/* -- SETUP MODAL -- */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:var(--s1);border:1px solid var(--b2);border-radius:12px;padding:28px;max-width:500px;width:100%;animation:fu .25s ease}
+.modal-box h2{font-family:var(--mn);font-size:14px;color:var(--ac);letter-spacing:2px;margin-bottom:6px}
+.modal-box p{font-size:11px;color:var(--t2);line-height:1.7;margin-bottom:16px}
+.modal-steps{background:var(--s2);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:10px;color:var(--t2);line-height:2;border:1px solid var(--b1)}
+.modal-steps strong{color:var(--ac);font-family:var(--mn)}
+.modal-steps code{background:var(--s3);color:var(--go);padding:1px 5px;border-radius:3px;font-family:var(--mn);font-size:9px}
+.modal-skip{background:none;border:none;color:var(--t3);font-family:var(--mn);font-size:9px;cursor:pointer;text-decoration:underline;margin-top:8px}
+.modal-skip:hover{color:var(--t2)}
+
+/* -- TOAST -- */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;font-family:var(--mn);font-size:10px;z-index:8000;animation:fu .2s ease;max-width:280px;line-height:1.5}
+.toast.ok{border-color:rgba(0,217,104,.4);color:var(--gn)}
+.toast.err{border-color:rgba(255,61,90,.3);color:var(--rd)}
+.toast.info{border-color:rgba(0,200,240,.3);color:var(--ac)}
+@media(max-width:768px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .main{padding:11px}
+  .cf-l{flex:0 0 100px;font-size:10px}
+  .p-grid{grid-template-columns:1fr 1fr}
+  .nav{grid-template-columns:repeat(7,1fr)}
+}
+@media(max-width:480px){
+  .p-grid{grid-template-columns:1fr}
+  .g4{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- SETUP MODAL -->
+<div class="modal-bg" id="setup-modal" style="display:none">
+  <div class="modal-box">
+    <h2>⚡ SUPABASE SYNC SETUP</h2>
+    <p>Connect CNX to Supabase for real-time sync across all your devices. Your data stays private — only your Supabase project can access it.</p>
+    <div class="modal-steps">
+      <strong>STEP 1</strong> — Go to <code>supabase.com</code> → New Project<br>
+      <strong>STEP 2</strong> — SQL Editor → Run:<br>
+      <code style="display:block;margin:4px 0;padding:6px;border-radius:4px;background:var(--bg);color:var(--gn);white-space:pre-wrap">create table cnx_data (
+  id text primary key,
+  payload jsonb,
+  updated_at timestamptz default now()
+);
+alter table cnx_data enable row level security;
+create policy "public rw" on cnx_data for all using (true);</code>
+      <strong>STEP 3</strong> — Settings → API → copy URL &amp; anon key below
+    </div>
+    <div class="fl"><label class="lbl">SUPABASE PROJECT URL</label>
+      <input class="inp" id="sb-url-inp" placeholder="https://xxxx.supabase.co" autocomplete="off"/></div>
+    <div class="fl"><label class="lbl">SUPABASE ANON KEY</label>
+      <input class="inp" id="sb-key-inp" placeholder="eyJ..." type="password" autocomplete="off"/></div>
+    <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+      <button class="btn btn-p" style="flex:1" onclick="saveSupabaseConfig()">CONNECT &amp; SYNC</button>
+      <button class="modal-skip" onclick="skipSetup()">Skip — use offline only</button>
+    </div>
+    <div id="modal-status" style="margin-top:10px;font-size:10px;color:var(--t2);font-family:var(--mn);min-height:16px"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="display:none" class="toast"></div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div>
+    <div class="logo">CNX</div>
+    <div class="logo-sub">KAY'S FINANCIAL OS · APR–DEC 2026 · v3</div>
+  </div>
+  <div class="hdr-r">
+    <div class="phase-tag" id="phase-tag">PHASE 1</div>
+    <div style="font-family:var(--mn);font-size:9px;color:var(--t2)" id="hdr-month">APR 2026</div>
+    <!-- SYNC STATUS -->
+    <div style="display:flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--b1);border-radius:4px;padding:4px 9px;cursor:pointer" onclick="openSetupModal()" title="Click to configure sync">
+      <div class="sync-dot offline" id="sync-dot"></div>
+      <span class="sync-lbl" id="sync-lbl" style="color:var(--t3)">OFFLINE</span>
+    </div>
+    <div style="font-family:var(--mn);font-size:8px;color:var(--t3)" id="last-saved"></div>
+    <button class="hdr-btn" onclick="exportData()">EXPORT</button>
+    <button class="hdr-btn" onclick="document.getElementById('import-file').click()" style="border-color:rgba(0,217,104,.3);color:var(--gn)">IMPORT</button>
+    <button class="hdr-btn" onclick="forcePush()" style="border-color:rgba(0,200,240,.3);color:var(--ac)" title="Force push local data to cloud">↑ PUSH</button>
+    <button class="hdr-btn" onclick="forcePull()" style="border-color:rgba(157,111,255,.3);color:var(--pu)" title="Force pull cloud data to this device">↓ PULL</button>
+    <button class="hdr-btn" onclick="resetData()" style="border-color:rgba(255,61,90,.2);color:var(--rd)" title="Clear all data">RESET</button>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)"/>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nb on" onclick="go('overview',this)" title="Press 1"><span class="ni">📊</span>OVERVIEW</button>
+  <button class="nb" onclick="go('mindmap',this)" title="Press 2"><span class="ni">🧠</span>MIND MAP</button>
+  <button class="nb" onclick="go('tracker',this)" title="Press 3"><span class="ni">🧾</span>TRACKER</button>
+  <button class="nb" onclick="go('cards',this)" title="Press 4"><span class="ni">💳</span>CC</button>
+  <button class="nb" onclick="go('savings',this)" title="Press 5"><span class="ni">🛡</span>EF & BUFFER</button>
+  <button class="nb" onclick="go('goals',this)" title="Press 6"><span class="ni">🏍</span>GOALS</button>
+  <button class="nb" onclick="go('forecast',this)" title="Press 7"><span class="ni">📅</span>FORECAST</button>
+</div>
+
+<div class="main">
+
+<!-- ==================================
+     TAB 1 · OVERVIEW DASHBOARD
+================================== -->
+<div class="tab on" id="tab-overview">
+  <div class="sec-t">Overview</div>
+  <div class="sec-s">Birds-eye view of your financial position — <span id="ov-month-lbl">April 2026</span></div>
+
+  <!-- MONTH SELECTOR -->
+  <div class="mstrip" id="ov-strip"></div>
+
+  <!-- TOP STATS -->
+  <div class="g4" style="margin-bottom:13px">
+    <div class="stat"><div class="sl">Monthly Income</div><div class="sv" id="ov-income">₹1,40,000</div><div class="ss" id="ov-income-s">Fixed take-home</div></div>
+    <div class="stat rd"><div class="sl">Planned Expenses</div><div class="sv" id="ov-exp">—</div><div class="ss" id="ov-exp-s">This month</div></div>
+    <div class="stat gn"><div class="sl">EF Contribution</div><div class="sv" id="ov-ef">—</div><div class="ss" id="ov-ef-s">This month</div></div>
+    <div class="stat go"><div class="sl">Buffer</div><div class="sv" id="ov-buf">—</div><div class="ss" id="ov-buf-s">This month</div></div>
+  </div>
+
+  <!-- ALERTS -->
+  <div class="card" style="margin-bottom:13px">
+    <div class="ct"><div class="ct-l">Smart Alerts</div></div>
+    <div id="ov-alerts"></div>
+  </div>
+
+  <!-- LOGGED SPEND TRACKER -->
+  <div class="card" style="margin-bottom:13px">
+    <div class="ct"><div class="ct-l">Logged Spend vs Plan — <span id="ov-log-month">April 2026</span></div>
+      <a onclick="go('tracker',document.querySelectorAll('.nb')[2])" style="font-size:9px;color:var(--ac);cursor:pointer;font-family:var(--mn)">→ LOG EXPENSE</a>
+    </div>
+    <div id="ov-log-detail"></div>
+  </div>
+
+  <!-- CASHFLOW + CC -->
+  <div class="g2" style="margin-bottom:13px">
+    <div class="card">
+      <div class="ct"><div class="ct-l">Cash Flow Breakdown</div></div>
+      <div id="ov-cf"></div>
+    </div>
+    <div class="card">
+      <div class="ct"><div class="ct-l">Debt Status</div></div>
+      <div style="margin-bottom:8px">
+        <div class="sl">TOTAL CC OUTSTANDING</div>
+        <div style="font-family:var(--mn);font-size:24px;font-weight:700;color:var(--rd)" id="ov-cc-total">—</div>
+      </div>
+      <div class="pb h10" style="background:var(--rr);margin-bottom:6px">
+        <div class="pbf" id="ov-cc-bar" style="background:linear-gradient(90deg,var(--gn),#5dffa0);width:0%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);font-family:var(--mn);margin-bottom:12px">
+        <span id="ov-cc-paid">PAID: ₹0</span><span id="ov-cc-pct">0% CLEARED</span>
+      </div>
+      <div style="font-size:11px;color:var(--t2);line-height:1.6;margin-bottom:11px">
+        CC1 ₹12k/mo friend (Apr–Oct) + ₹5k card (May–Jun) · CC2 variable schedule<br>
+        <strong style="color:var(--gn)">Target: CC1 cleared Oct, CC2 cleared Dec 2026</strong>
+      </div>
+      <div style="display:flex;gap:7px">
+        <div class="pfx" style="flex:1"><span class="px">₹</span><input class="inp" type="number" id="cc-pay-inp" placeholder="Log a CC payment"/></div>
+        <button class="btn btn-p" onclick="logCCPayment()">LOG</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIORITY BUCKETS -->
+  <div class="card" style="margin-bottom:13px">
+    <div class="ct"><div class="ct-l">Priority Buckets</div></div>
+    <div class="p-grid" id="ov-pbuckets"></div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="card">
+    <div class="ct"><div class="ct-l">Kay's Financial Roadmap</div></div>
+    <div id="ov-timeline"></div>
+  </div>
+</div>
+
+<!-- ==================================
+     TAB 2 · MIND MAP
+================================== -->
+<div class="tab" id="tab-mindmap">
+  <div class="sec-t">Financial Architecture</div>
+  <div class="sec-s">Visual flow of your ₹1,40,000 — dynamically reflects the selected month.</div>
+  <div class="mstrip" id="mm-strip"></div>
+  <div class="card" style="margin-bottom:13px">
+    <div class="ct"><div class="ct-l">Money Flow Map — <span id="mm-month-lbl">April 2026</span></div></div>
+    <div class="mm-canvas" id="mm-canvas">
+      <svg class="mm-svg" id="mm-svg"></svg>
+      <div class="mm-center" id="mm-center">₹1.4L<br><span style="font-size:7px;letter-spacing:2px">INCOME</span></div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card">
+      <div class="ct"><div class="ct-l">Allocation Weights</div></div>
+      <div id="mm-weights"></div>
+    </div>
+    <div class="card" style="grid-column:span 2">
+      <div class="ct"><div class="ct-l">Month Context</div></div>
+      <div id="mm-context"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================================
+     TAB 3 · DAILY TRACKER
+================================== -->
+<div class="tab" id="tab-tracker">
+  <div class="sec-t">Daily Expense Tracker</div>
+  <div class="sec-s">Log every rupee. Filter by month, category or date.</div>
+  <div class="mstrip" id="tr-strip"></div>
+
+  <!-- ADD FORM -->
+  <div class="card" style="margin-bottom:13px">
+    <div class="ct"><div class="ct-l">Add Transaction</div></div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:9px;align-items:flex-end">
+      <div class="fl" style="margin-bottom:0"><label class="lbl">Description</label><input class="inp" id="tr-desc" placeholder="e.g. Swiggy, Petrol, CC payment"/></div>
+      <div class="fl" style="margin-bottom:0"><label class="lbl">Category</label>
+        <select class="inp" id="tr-cat">
+          <option value="Fixed">🏠 Fixed</option>
+          <option value="CC1">💳 CC1</option>
+          <option value="CC2">💳 CC2</option>
+          <option value="EF">🛡 EF</option>
+          <option value="Buffer">💰 Buffer</option>
+          <option value="CNIS">📋 CNIS</option>
+          <option value="LIC">🛡 LIC</option>
+          <option value="Purchase">🛍 Purchase</option>
+          <option value="Transport">🚗 Transport</option>
+          <option value="Groceries">🛒 Groceries</option>
+          <option value="Food">🍔 Food</option>
+          <option value="Meds">💊 Meds</option>
+          <option value="Misc">📦 Misc</option>
+        </select>
+      </div>
+      <div class="fl" style="margin-bottom:0"><label class="lbl">Amount (₹)</label><div class="pfx"><span class="px">₹</span><input class="inp" type="number" id="tr-amt" placeholder="0"/></div></div>
+      <div class="fl" style="margin-bottom:0"><label class="lbl">Date</label><input class="inp" type="date" id="tr-date"/></div>
+      <button class="btn btn-p" style="height:38px" onclick="addTransaction()">ADD</button>
+    </div>
+    <div class="fl mt" style="margin-bottom:0"><label class="lbl">Note (optional)</label><input class="inp" id="tr-note" placeholder="Additional context..."/></div>
+  </div>
+
+  <!-- CATEGORY FILTER -->
+  <div id="tr-extra-panel" style="margin-bottom:13px"></div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="cat-filters"></div>
+
+  <!-- SUMMARY CARDS -->
+  <div class="card" style="margin-bottom:13px">
+    <div class="ct"><div class="ct-l">Category Breakdown — <span id="tr-month-lbl">April 2026</span></div></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:12px" id="tr-cat-grid"></div>
+    <div class="div"></div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div><div class="sl">LOGGED</div><div style="font-family:var(--mn);font-size:16px;font-weight:700;color:var(--rd)" id="tr-total">₹0</div></div>
+      <div><div class="sl">FORECAST</div><div style="font-family:var(--mn);font-size:16px;font-weight:700;color:var(--ac)" id="tr-forecast">—</div></div>
+      <div><div class="sl">VARIANCE</div><div style="font-family:var(--mn);font-size:16px;font-weight:700" id="tr-var">—</div></div>
+      <div><div class="sl">REMAINING</div><div style="font-family:var(--mn);font-size:16px;font-weight:700;color:var(--gn)" id="tr-rem">₹1,40,000</div></div>
+    </div>
+  </div>
+
+  <!-- TRANSACTION LIST -->
+  <div class="card">
+    <div class="ct">
+      <div class="ct-l">Transactions</div>
+      <div style="font-size:9px;color:var(--t3)" id="tr-count">0 entries</div>
+    </div>
+    <div class="tx-list" id="tr-list">
+      <div style="padding:18px;text-align:center;color:var(--t3);font-family:var(--mn);font-size:10px">NO TRANSACTIONS YET</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================================
+     TAB 4 · CC TRACKER
+================================== -->
+<div class="tab" id="tab-cards">
+  <div class="sec-t">Credit Card Hub</div>
+  <div class="sec-s">Log CC expenses, track payments, and watch the burn-down across CC1 and CC2.</div>
+
+  <!-- CC EXPENSE LOGGER -->
+  <div class="card" style="margin-bottom:13px">
+    <div class="ct"><div class="ct-l">Log CC Expense</div>
+      <span class="bdg bdg-r" style="font-size:8px">ADDS TO CC DEBT</span>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:9px;align-items:flex-end">
+      <div class="fl" style="margin-bottom:0"><label class="lbl">Description</label><input class="inp" id="ccx-desc" placeholder="e.g. Amazon, Flipkart, Fuel"/></div>
+      <div class="fl" style="margin-bottom:0"><label class="lbl">Card</label>
+        <select class="inp" id="ccx-card">
+          <option value="1">💳 CC1</option>
+          <option value="2">💳 CC2</option>
+        </select>
+      </div>
+      <div class="fl" style="margin-bottom:0"><label class="lbl">Amount (₹)</label><div class="pfx"><span class="px">₹</span><input class="inp" type="number" id="ccx-amt" placeholder="0"/></div></div>
+      <div class="fl" style="margin-bottom:0"><label class="lbl">Date</label><input class="inp" type="date" id="ccx-date"/></div>
+      <button class="btn btn-d" style="height:38px" onclick="addCCExpense()">LOG</button>
+    </div>
+    <div class="fl mt" style="margin-bottom:0"><label class="lbl">Note (optional)</label><input class="inp" id="ccx-note" placeholder="Category or context..."/></div>
+    <!-- Expense summary -->
+    <div class="div"></div>
+    <div class="ct" style="margin-bottom:6px"><div class="ct-l">CC Expenses This Month</div>
+      <div style="font-size:9px;color:var(--t3)" id="ccx-count">0 entries</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:7px;padding:9px;text-align:center">
+        <div class="sl">CC1 EXPENSES</div>
+        <div style="font-family:var(--mn);font-size:16px;font-weight:700;color:var(--rd)" id="ccx-cc1-total">₹0</div>
+      </div>
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:7px;padding:9px;text-align:center">
+        <div class="sl">CC2 EXPENSES</div>
+        <div style="font-family:var(--mn);font-size:16px;font-weight:700;color:var(--or)" id="ccx-cc2-total">₹0</div>
+      </div>
+    </div>
+    <div class="tx-list" id="ccx-list" style="max-height:200px">
+      <div style="padding:12px;text-align:center;color:var(--t3);font-size:10px;font-family:var(--mn)">NO CC EXPENSES LOGGED YET</div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-bottom:13px">
+    <!-- CC1 -->
+    <div class="card">
+      <div class="ct"><div class="ct-l">Card 1 — ₹12k/mo to friend (Apr–Oct) + ₹10k card</div></div>
+      <div class="cc-card">
+        <div class="cc-name">CC1 STATUS</div>
+        <div class="cc-bal" style="color:var(--rd)" id="cc1-bal">₹93,000 total</div>
+        <div class="pb h8" style="background:var(--rr);margin-bottom:5px">
+          <div class="pbf" id="cc1-bar" style="background:linear-gradient(90deg,var(--gn),#5dffa0);width:0%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);font-family:var(--mn)">
+          <span id="cc1-paid-lbl">PAID: ₹0</span><span id="cc1-pct">0%</span>
+        </div>
+      </div>
+      <!-- Month burn-down -->
+      <div class="ct" style="margin-top:12px;margin-bottom:6px"><div class="ct-l">Monthly Burn-Down</div></div>
+      <div class="cc-burn" id="cc1-burn"></div>
+      <div style="font-size:10px;color:var(--t2);line-height:1.6;margin-top:8px">
+        ₹12k/mo to friend (Apr–Oct, ₹83k) + ₹5k card payoff May & Jun · <strong style="color:var(--gn)">Clears end of October ✓</strong>
+      </div>
+      <div style="display:flex;gap:7px;margin-top:10px">
+        <div class="pfx" style="flex:1"><span class="px">₹</span><input class="inp" type="number" id="cc1-inp" placeholder="Payment amount"/></div>
+        <button class="btn btn-p" onclick="logCC(1)">LOG</button>
+      </div>
+      <div class="fl mt" style="margin-bottom:0"><label class="lbl">Note (optional)</label><input class="inp" id="cc1-note" placeholder="e.g. April EMI, Extra payment..."/></div>
+      <div class="div"></div>
+      <div class="ct" style="margin-bottom:6px"><div class="ct-l">Payment History</div></div>
+      <div class="tx-list" id="cc1-history"></div>
+    </div>
+
+    <!-- CC2 -->
+    <div class="card">
+      <div class="ct"><div class="ct-l">Card 2 — Variable (Apr–Nov)</div></div>
+      <div class="cc-card">
+        <div class="cc-name">CC2 STATUS</div>
+        <div class="cc-bal" style="color:var(--or)" id="cc2-bal">₹95,000 total</div>
+        <div class="pb h8" style="background:var(--rr);margin-bottom:5px">
+          <div class="pbf" id="cc2-bar" style="background:linear-gradient(90deg,var(--go),#ffd060);width:0%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);font-family:var(--mn)">
+          <span id="cc2-paid-lbl">PAID: ₹0</span><span id="cc2-pct">0%</span>
+        </div>
+      </div>
+      <div class="ct" style="margin-top:12px;margin-bottom:6px"><div class="ct-l">Monthly Schedule</div></div>
+      <div id="cc2-schedule"></div>
+      <div style="display:flex;gap:7px;margin-top:10px">
+        <div class="pfx" style="flex:1"><span class="px">₹</span><input class="inp" type="number" id="cc2-inp" placeholder="Payment amount"/></div>
+        <button class="btn btn-p" onclick="logCC(2)">LOG</button>
+      </div>
+      <div class="fl mt" style="margin-bottom:0"><label class="lbl">Note (optional)</label><input class="inp" id="cc2-note" placeholder="e.g. April EMI, Partial payment..."/></div>
+      <div class="div"></div>
+      <div class="ct" style="margin-bottom:6px"><div class="ct-l">Payment History</div></div>
+      <div class="tx-list" id="cc2-history"></div>
+    </div>
+  </div>
+
+  <!-- COMBINED BURN-DOWN -->
+  <div class="card">
+    <div class="ct"><div class="ct-l">Combined Debt Burn-Down · Apr–Dec</div></div>
+    <div class="chart-area" id="cc-combined-chart" style="height:160px"></div>
+    <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;border-radius:2px;background:var(--rd)"></div><span style="font-size:9px;color:var(--t3)">CC1</span></div>
+      <div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;border-radius:2px;background:var(--or)"></div><span style="font-size:9px;color:var(--t3)">CC2</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================================
+     TAB 5 · EF & BUFFER
+================================== -->
+<div class="tab" id="tab-savings">
+  <div class="sec-t">Emergency Fund & Buffer</div>
+  <div class="sec-s">Balances auto-update from the Tracker. Use manual inputs for out-of-tracker adjustments only.</div>
+
+  <div class="g2" style="margin-bottom:13px">
+    <!-- EF -->
+    <div class="card">
+      <div class="ct"><div class="ct-l">Emergency Fund</div>
+        <span class="bdg bdg-b" style="font-size:8px">AUTO-SYNCED</span>
+      </div>
+      <div style="margin-bottom:10px">
+        <div class="sl">CURRENT EF BALANCE</div>
+        <div style="font-family:var(--mn);font-size:28px;font-weight:700;color:var(--gn)" id="ef-balance">₹0</div>
+        <div style="font-size:10px;color:var(--t2);margin-top:2px">Target: ₹2,00,000</div>
+      </div>
+      <div class="pb h10" style="margin-bottom:6px">
+        <div class="pbf" id="ef-bar" style="background:linear-gradient(90deg,var(--gn),#5dffa0);width:0%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);font-family:var(--mn);margin-bottom:10px">
+        <span id="ef-pct-lbl">0% of target</span><span id="ef-months-left">— months to ₹2L</span>
+      </div>
+      <!-- Source breakdown -->
+      <div id="ef-source-breakdown"></div>
+      <!-- EF milestones -->
+      <div id="ef-milestones"></div>
+      <div class="div"></div>
+      <div class="ct" style="margin-bottom:6px">
+        <div class="ct-l">Manual Adjustment</div>
+        <span style="font-size:9px;color:var(--t3)">Use only if not logged in Tracker</span>
+      </div>
+      <div style="display:flex;gap:7px;margin-bottom:5px">
+        <div class="pfx" style="flex:1"><span class="px">₹</span><input class="inp" type="number" id="ef-inp" placeholder="Add to EF"/></div>
+        <button class="btn btn-p" onclick="addEF()">ADD</button>
+      </div>
+      <div class="fl" style="margin-bottom:9px"><input class="inp" id="ef-note" placeholder="Note e.g. MF transfer, SIP..."/></div>
+      <div style="display:flex;gap:7px;margin-bottom:5px">
+        <div class="pfx" style="flex:1"><span class="px">₹</span><input class="inp" type="number" id="ef-ded-inp" placeholder="Deduct from EF"/></div>
+        <button class="btn btn-d" onclick="useEF()">DEDUCT</button>
+      </div>
+      <div class="fl" style="margin-bottom:0"><input class="inp" id="ef-ded-note" placeholder="Note e.g. Emergency withdrawal, Medical..."/></div>
+    </div>
+
+    <!-- BUFFER -->
+    <div class="card">
+      <div class="ct"><div class="ct-l">Buffer Accumulation</div>
+        <span class="bdg bdg-b" style="font-size:8px">AUTO-SYNCED</span>
+      </div>
+      <div style="margin-bottom:10px">
+        <div class="sl">NET BUFFER BALANCE</div>
+        <div style="font-family:var(--mn);font-size:28px;font-weight:700;color:var(--go)" id="buf-balance">₹0</div>
+        <div style="font-size:10px;color:var(--t2);margin-top:2px">Forecast total: ₹1,78,900 (after ₹50k bike)</div>
+      </div>
+      <div class="pb h10" style="margin-bottom:6px">
+        <div class="pbf" id="buf-bar" style="background:linear-gradient(90deg,var(--go),#ffd060);width:0%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);font-family:var(--mn);margin-bottom:10px">
+        <span id="buf-pct-lbl">0% of forecast</span><span id="buf-total-lbl">Forecast: ₹1,78,900</span>
+      </div>
+      <!-- Source breakdown -->
+      <div id="buf-source-breakdown"></div>
+      <div id="buf-breakdown"></div>
+      <div class="div"></div>
+      <div class="ct" style="margin-bottom:6px">
+        <div class="ct-l">Manual Adjustment</div>
+        <span style="font-size:9px;color:var(--t3)">Use only if not logged in Tracker</span>
+      </div>
+      <div style="display:flex;gap:7px;margin-bottom:5px">
+        <div class="pfx" style="flex:1"><span class="px">₹</span><input class="inp" type="number" id="buf-add-inp" placeholder="Add to buffer"/></div>
+        <button class="btn btn-p" onclick="addBuffer()">ADD</button>
+      </div>
+      <div class="fl" style="margin-bottom:9px"><input class="inp" id="buf-add-note" placeholder="Note e.g. Monthly surplus..."/></div>
+      <div style="display:flex;gap:7px;margin-bottom:5px">
+        <div class="pfx" style="flex:1"><span class="px">₹</span><input class="inp" type="number" id="buf-inp" placeholder="Deduct from buffer"/></div>
+        <button class="btn btn-d" onclick="useBuffer()">DEDUCT</button>
+      </div>
+      <div class="fl" style="margin-bottom:0"><input class="inp" id="buf-note" placeholder="Note e.g. Bike purchase, Emergency..."/></div>
+    </div>
+  </div>
+
+  <!-- MONTHLY LOG TABLES -->
+  <div class="g2" style="margin-bottom:13px">
+    <div class="card">
+      <div class="ct"><div class="ct-l">EF · Monthly Log vs Plan</div></div>
+      <div style="font-size:9px;color:var(--t3);font-family:var(--mn);margin-bottom:8px">Dark bar = logged · Light bar = plan</div>
+      <div id="ef-monthly-log"></div>
+    </div>
+    <div class="card">
+      <div class="ct"><div class="ct-l">Buffer · Monthly Log vs Plan</div></div>
+      <div style="font-size:9px;color:var(--t3);font-family:var(--mn);margin-bottom:8px">Dark bar = logged · Light bar = plan</div>
+      <div id="buf-monthly-log"></div>
+    </div>
+  </div>
+
+  <!-- EF GROWTH CHART -->
+  <div class="card" style="margin-bottom:13px">
+    <div class="ct"><div class="ct-l">EF Growth · Apr–Dec 2026</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:rgba(0,217,104,0.25);border-radius:2px"></div><span style="font-size:9px;color:var(--t3)">Plan</span></div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:var(--gn);border-radius:2px"></div><span style="font-size:9px;color:var(--t3)">Logged</span></div>
+      </div>
+    </div>
+    <div class="chart-area" id="ef-chart"></div>
+    <div style="font-size:9px;color:var(--t3);font-family:var(--mn);margin-top:8px">Hover bars to see values</div>
+  </div>
+
+  <!-- BUFFER CHART -->
+  <div class="card" style="margin-bottom:13px">
+    <div class="ct"><div class="ct-l">Buffer Accumulation · Apr–Dec 2026</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:rgba(240,165,0,0.25);border-radius:2px"></div><span style="font-size:9px;color:var(--t3)">Plan</span></div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:var(--go);border-radius:2px"></div><span style="font-size:9px;color:var(--t3)">Logged</span></div>
+      </div>
+    </div>
+    <div class="chart-area" id="buf-chart"></div>
+    <div style="font-size:10px;color:var(--go);margin-top:6px">🏍 Vehicle ₹50,000 deducted in September</div>
+  </div>
+
+  <!-- MONTHLY NOTES -->
+  <div class="card">
+    <div class="ct"><div class="ct-l">Monthly Contribution Notes · Flag reductions with reasons</div></div>
+    <div id="ef-notes"></div>
+  </div>
+</div>
+
+<!-- ==================================
+     TAB 6 · GOALS
+================================== -->
+<div class="tab" id="tab-goals">
+  <div class="sec-t">Goals & Desires</div>
+  <div class="sec-s">Track what you're building toward. The bike is first. The Himalayan is next.</div>
+
+  <div class="g2" style="margin-bottom:13px">
+    <!-- BIKE GOAL -->
+    <div class="card">
+      <div class="goal-big">
+        <div class="goal-icon">🏍</div>
+        <div class="goal-name">2ND HAND BIKE</div>
+        <div class="goal-target">Target: ₹50,000 · Source: Buffer · Buy: September 2026</div>
+        <div class="goal-amt" id="bike-amt">₹0</div>
+        <div style="font-size:10px;color:var(--t2);margin-bottom:12px" id="bike-pct-lbl">0% of ₹50,000</div>
+        <div class="pb h10" style="margin-bottom:12px">
+          <div class="pbf" id="bike-bar" style="background:linear-gradient(90deg,var(--go),var(--or));width:0%"></div>
+        </div>
+        <div id="bike-ready-wrap"></div>
+      </div>
+      <div class="div"></div>
+      <div style="font-size:11px;color:var(--t2);line-height:1.7">
+        Buffer accumulates <strong style="color:var(--go)">₹0 in April</strong> (reset month), then ₹2,700/mo May–Jun, then ₹12,700/month from July. 
+        By September cumulative buffer (before purchase) reaches <strong style="color:var(--go)">~₹43,500</strong>. 
+        Buy the bike and rebuild buffer through year-end.
+      </div>
+      <div style="display:flex;gap:7px;margin-top:10px">
+        <div class="pfx" style="flex:1"><span class="px">₹</span><input class="inp" type="number" id="bike-inp" placeholder="Amount saved"/></div>
+        <button class="btn btn-go" onclick="updateBike()">ADD</button>
+      </div>
+      <div class="fl mt" style="margin-bottom:0"><input class="inp" id="bike-note" placeholder="Note e.g. Cash set aside, Buffer transfer..."/></div>
+      <div class="div"></div>
+      <div class="ct" style="margin-bottom:6px"><div class="ct-l">Contribution History</div></div>
+      <div class="tx-list" id="bike-history"></div>
+    </div>
+
+    <!-- RE HIMALAYAN -->
+    <div class="card">
+      <div class="goal-big" style="background:linear-gradient(135deg,rgba(157,111,255,.07),rgba(255,106,42,.05));border-color:rgba(157,111,255,.2)">
+        <div class="goal-icon">🏔</div>
+        <div class="goal-name" style="color:var(--pu)">ROYAL ENFIELD HIMALAYAN</div>
+        <div class="goal-target">Target: ₹5,00,000 · Starts: Jan 2027 · Est: 2030–31</div>
+        <div class="goal-amt" style="color:var(--pu)" id="re-amt-disp">₹0</div>
+        <div style="font-size:10px;color:var(--t2);margin-bottom:12px" id="re-pct-lbl">0% of ₹5,00,000</div>
+        <div class="pb h10" style="margin-bottom:12px">
+          <div class="pbf" id="re-bar" style="background:linear-gradient(90deg,var(--pu),var(--or));width:0%"></div>
+        </div>
+        <div style="background:rgba(157,111,255,.1);border:1px solid rgba(157,111,255,.2);border-radius:6px;padding:8px;font-size:10px;color:var(--t2);line-height:1.6;text-align:left">
+          💡 <strong style="color:var(--pu)">Post-December plan:</strong> Start ₹8,000/month SIP in Balanced Advantage Fund. 
+          At 11% p.a. over 4 years = ~₹5.2L corpus. Planning begins Jan 2027.
+        </div>
+      </div>
+      <div class="div"></div>
+      <div style="font-size:11px;color:var(--t2);line-height:1.7;margin-bottom:10px">
+        This goal is <strong style="color:var(--pu)">on hold until CC debt is cleared</strong>. 
+        Focus for 2026 is EF + Buffer only. Himalayan fund activates in January 2027.
+      </div>
+      <div style="display:flex;gap:7px;margin-top:4px">
+        <div class="pfx" style="flex:1"><span class="px">₹</span><input class="inp" type="number" id="re-inp" placeholder="Log SIP contribution (Jan 2027+)"/></div>
+        <button class="btn" style="background:rgba(157,111,255,.1);border:1px solid rgba(157,111,255,.3);color:var(--pu)" onclick="updateRE()">LOG</button>
+      </div>
+      <div class="fl mt" style="margin-bottom:0"><input class="inp" id="re-note" placeholder="Note e.g. Jan 2027 SIP, Lump sum..."/></div>
+      <div class="div"></div>
+      <div class="ct" style="margin-bottom:6px"><div class="ct-l">Contribution History</div></div>
+      <div class="tx-list" id="re-history"></div>
+    </div>
+  </div>
+
+  <!-- BUFFER TIMELINE FOR BIKE -->
+  <div class="card">
+    <div class="ct"><div class="ct-l">Buffer Build-Up → Bike Purchase Timeline</div></div>
+    <div id="bike-timeline"></div>
+  </div>
+</div>
+
+<!-- ==================================
+     TAB 7 · FORECAST
+================================== -->
+<div class="tab" id="tab-forecast">
+  <div class="sec-t">Financial Forecast</div>
+  <div class="sec-s">Full Apr–Dec 2026 plan. Month-by-month table + 6M & Year-end summaries.</div>
+
+  <!-- 6M SUMMARY -->
+  <div class="g4" style="margin-bottom:13px" id="fc-6m-stats"></div>
+
+  <!-- FULL TABLE -->
+  <div class="card" style="margin-bottom:13px">
+    <div class="ct"><div class="ct-l">Month-by-Month Forecast · April → December 2026</div></div>
+    <div class="tbl-wrap">
+      <table class="tbl" id="fc-table">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Income</th>
+            <th>Fixed</th>
+            <th>Core (CNIS+LIC)</th>
+            <th>CC1</th>
+            <th>CC2</th>
+            <th>Purchase</th>
+            <th>Total Expense</th>
+            <th>EF Contrib</th>
+            <th>Buffer</th>
+            <th>Cum. EF</th>
+            <th>Cum. Buffer*</th>
+            <th>Milestone</th>
+          </tr>
+        </thead>
+        <tbody id="fc-tbody"></tbody>
+      </table>
+    </div>
+    <div style="font-size:10px;color:var(--t3);margin-top:8px">* Buffer cumulative after ₹50k vehicle deduction in September</div>
+  </div>
+
+  <!-- 6M vs YEAR END -->
+  <div class="g2" style="margin-bottom:13px">
+    <div class="card">
+      <div class="ct"><div class="ct-l">6-Month Summary · Apr–Sep 2026</div></div>
+      <div id="fc-6m-detail"></div>
+    </div>
+    <div class="card">
+      <div class="ct"><div class="ct-l">Year-End Summary · Apr–Dec 2026</div></div>
+      <div id="fc-ye-detail"></div>
+    </div>
+  </div>
+
+  <!-- ALL CHARTS -->
+  <div class="g2" style="margin-bottom:13px">
+    <div class="card">
+      <div class="ct"><div class="ct-l">EF Growth vs Debt Burden</div></div>
+      <div class="chart-area" id="fc-ef-debt-chart"></div>
+      <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:var(--gn);border-radius:2px"></div><span style="font-size:9px;color:var(--t3)">EF Balance</span></div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:var(--rd);border-radius:2px"></div><span style="font-size:9px;color:var(--t3)">Total Debt</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct"><div class="ct-l">Surplus vs Expense</div></div>
+      <div class="chart-area" id="fc-surp-chart"></div>
+      <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:var(--rd);border-radius:2px"></div><span style="font-size:9px;color:var(--t3)">Expenses</span></div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:var(--gn);border-radius:2px"></div><span style="font-size:9px;color:var(--t3)">EF+Buffer</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTES & RISK ENGINE -->
+  <div class="g2">
+    <div class="card">
+      <div class="ct"><div class="ct-l">⚠️ Risk Flags & Notes</div></div>
+      <div id="fc-risk-flags"></div>
+      <div class="div"></div>
+      <div class="ct" style="margin-bottom:8px"><div class="ct-l">Add Note / Upcoming Expense</div></div>
+      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px">
+        <input class="inp" id="fc-note-inp" placeholder="e.g. Car service due Oct, Medical ₹8k risk..."/>
+        <button class="btn btn-o" onclick="addForecastNote()">ADD</button>
+      </div>
+      <div id="fc-notes-list"></div>
+    </div>
+    <div class="card">
+      <div class="ct"><div class="ct-l">📊 Intelligence Summary</div></div>
+      <div id="fc-intelligence"></div>
+    </div>
+  </div>
+
+</div><!-- /tab-forecast -->
+
+</div><!-- /main -->
+
+<script>
+// ===============================================
+//  CORE DATA MODEL — Single source of truth
+// ===============================================
+const PLAN = [
+  { key:'2026-04', lbl:'April',     fixed:70000, core:10300, cc1:12000, cc2:35000, purchase:0,     ef:8000,  buf:0     },
+  { key:'2026-05', lbl:'May',       fixed:70000, core:10300, cc1:17000, cc2:20000, purchase:10000, ef:10000, buf:2700  },
+  { key:'2026-06', lbl:'June',      fixed:70000, core:10300, cc1:17000, cc2:20000, purchase:10000, ef:10000, buf:2700  },
+  { key:'2026-07', lbl:'July',      fixed:70000, core:10300, cc1:12000, cc2:10000, purchase:0,     ef:25000, buf:12700 },
+  { key:'2026-08', lbl:'August',    fixed:70000, core:10300, cc1:12000, cc2:10000, purchase:0,     ef:25000, buf:12700 },
+  { key:'2026-09', lbl:'September', fixed:70000, core:10300, cc1:12000, cc2:10000, purchase:0,     ef:25000, buf:12700 },
+  { key:'2026-10', lbl:'October',   fixed:70000, core:10300, cc1:11000, cc2:10000, purchase:0,     ef:26000, buf:12700 },
+  { key:'2026-11', lbl:'November',  fixed:70000, core:10300, cc1:0,     cc2:10000, purchase:0,     ef:30000, buf:19700 },
+  { key:'2026-12', lbl:'December',  fixed:70000, core:10300, cc1:0,     cc2:0,     purchase:0,     ef:35000, buf:24700 },
+];
+
+const INCOME = 140000;
+const CC1_TOTAL = 93000;  // ₹83k friend debt + ₹10k new card spend
+const CC2_TOTAL = 95000;
+const EF_TARGET = 200000;
+const VEHICLE_COST = 50000;
+const VEHICLE_MONTH = '2026-09';
+
+// Derive computed fields
+let cumEF = 0, cumBuf = 0;
+const MDATA = PLAN.map(m => {
+  const totalExp = m.fixed + m.core + m.cc1 + m.cc2 + (m.purchase || 0);
+  const debt = m.cc1 + m.cc2;
+  const veh = m.key === VEHICLE_MONTH ? VEHICLE_COST : 0;
+  cumEF += m.ef;
+  cumBuf += m.buf - veh;
+  let milestone = '';
+  if (cumEF >= 50000  && cumEF - m.ef < 50000)  milestone += '🎯 EF ₹50k ';
+  if (cumEF >= 100000 && cumEF - m.ef < 100000) milestone += '🎯 EF ₹1L ';
+  if (cumEF >= 150000 && cumEF - m.ef < 150000) milestone += '🎯 EF ₹1.5L ';
+  if (veh > 0) milestone += '🏍 Bike Buy ';
+  if (m.cc1 === 0 && PLAN[PLAN.indexOf(m)-1]?.cc1 > 0) milestone += '✅ CC1 Done ';
+  if (m.cc2 === 0 && PLAN[PLAN.indexOf(m)-1]?.cc2 > 0) milestone += '✅ CC2 Done ';
+  if (m.purchase > 0) milestone += '🛍 Purchase ₹' + (m.purchase/1000) + 'k ';
+  return { ...m, totalExp, debt, veh, cumEF, cumBuf, milestone };
+});
+
+// CHANGE 3: Added Transport, Groceries, Food, Meds to icons and colors
+const CAT_ICONS = { Fixed:'🏠', CC1:'💳', CC2:'💳', EF:'🛡', Buffer:'💰', CNIS:'📋', LIC:'🛡', Purchase:'🛍', Transport:'🚗', Groceries:'🛒', Food:'🍔', Meds:'💊', Misc:'📦' };
+const CAT_COLORS = { Fixed:'var(--rd)', CC1:'var(--rd)', CC2:'var(--or)', EF:'var(--gn)', Buffer:'var(--go)', CNIS:'var(--ac)', LIC:'var(--pu)', Purchase:'#ff6b6b', Transport:'#4ecdc4', Groceries:'#ffe66d', Food:'#ff6b6b', Meds:'#a8e6cf', Misc:'var(--t2)' };
+
+// ===============================================
+//  STATE
+// ===============================================
+let STATE = {
+  transactions: [],
+  cc1Paid: 0,
+  cc2Paid: 0,
+  ccPayments: [],
+  ccExpenses: [],   // { id, card, desc, amt, date, note }
+  efAdjust: 0,
+  bufAdjust: 0,
+  efLedger: [],
+  bufLedger: [],
+  bikeLog: [],
+  reLog: [],
+  bikeAmt: 0,
+  reAmt: 0,
+  notes: {},
+  priorities: { p0:0, p1:0, p2:0, p3:0 },
+  forecastNotes: [],
+  additionalIncome: {},
+  lastUpdated: 0
+};
+let curMonth = '2026-04';
+let trCatFilter = 'All';
+
+// ===============================================
+//  SUPABASE SYNC ENGINE — v4 (safe rebuild)
+// ===============================================
+
+const SB_HARDCODED_URL = 'https://alxtlzxbjpxxdrpohnvb.supabase.co';
+const SB_HARDCODED_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFseHRsenhianB4eGRycG9obnZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NTM3NTUsImV4cCI6MjA5MDAyOTc1NX0.7B41JEAgwt0LmubRQoq4csfTdH4J_I2DXUzHe7iGZkw';
+
+const SB_CONFIG_KEY = 'cnx_sb_config';
+const LS_KEY        = 'cnx_v4';
+const ROW_ID        = 'cnx_kay_main';
+const POLL_MS       = 8000;
+
+let sbUrl     = SB_HARDCODED_URL.replace(/\/$/, '');
+let sbKey     = SB_HARDCODED_KEY;
+let sbReady   = true;
+let pollTimer = null;
+let _isSyncing = false;
+
+(function applySavedConfig() {
+  try {
+    const c = localStorage.getItem(SB_CONFIG_KEY);
+    if (c) {
+      const cfg = JSON.parse(c);
+      if (cfg.url && cfg.key && cfg.url.replace(/\/$/, '') === SB_HARDCODED_URL.replace(/\/$/, '')) {
+        sbUrl = cfg.url.replace(/\/$/, '');
+        sbKey = cfg.key;
+      } else if (cfg.url && cfg.key && cfg.url !== SB_HARDCODED_URL.replace(/\/$/, '')) {
+        sbUrl = cfg.url.replace(/\/$/, '');
+        sbKey = cfg.key;
+      }
+    }
+  } catch(e) {}
+  if (!sbUrl || sbUrl.includes('xxxx') || !sbKey || sbKey.length < 50) {
+    sbUrl = SB_HARDCODED_URL.replace(/\/$/, '');
+    sbKey = SB_HARDCODED_KEY;
+    try { localStorage.removeItem(SB_CONFIG_KEY); } catch(e) {}
+  }
+})();
+
+function setSyncStatus(state, label) {
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-lbl');
+  if (!dot || !lbl) return;
+  dot.className = 'sync-dot ' + state;
+  lbl.textContent = label;
+  const colors = { online:'var(--gn)', syncing:'var(--ac)', error:'var(--rd)', offline:'var(--t3)' };
+  lbl.style.color = colors[state] || 'var(--t3)';
+}
+
+function showToast(msg, type = 'info', ms = 3000) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'toast ' + type;
+  el.style.display = 'block';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.display = 'none'; }, ms);
+}
+
+const lsSave = () => {
+  try {
+    STATE.lastUpdated = STATE.lastUpdated || Date.now();
+    localStorage.setItem(LS_KEY, JSON.stringify(STATE));
+    const ts = document.getElementById('last-saved');
+    if (ts) ts.textContent = 'SAVED ' + new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  } catch(e) {}
+};
+const lsLoad = () => {
+  try { const s = localStorage.getItem(LS_KEY); if (s) STATE = { ...STATE, ...JSON.parse(s) }; } catch(e) {}
+};
+
+async function sbFetch(path, opts = {}) {
+  const headers = {
+    'apikey': sbKey,
+    'Authorization': 'Bearer ' + sbKey,
+    'Content-Type': 'application/json',
+  };
+  if (opts.prefer) headers['Prefer'] = opts.prefer;
+  const res = await fetch(sbUrl + path, {
+    headers,
+    method: opts.method || 'GET',
+    body: opts.body ? JSON.stringify(opts.body) : undefined
+  });
+  if (!res.ok) {
+    const err = await res.text().catch(() => String(res.status));
+    throw new Error(res.status + ': ' + err);
+  }
+  return res.status === 204 ? null : res.json();
+}
+
+let _pushDebounce = null;
+async function pushToSupabase(debounce = true) {
+  if (!sbReady) return;
+  if (debounce) {
+    clearTimeout(_pushDebounce);
+    _pushDebounce = setTimeout(() => pushToSupabase(false), 1000);
+    return;
+  }
+  if (_isSyncing) return;
+  _isSyncing = true;
+  setSyncStatus('syncing', 'SAVING');
+  try {
+    STATE.lastUpdated = Date.now();
+    const payload = JSON.parse(JSON.stringify(STATE));
+    const base = sbUrl.replace(/\/$/, '');
+
+    let res = await fetch(base + '/rest/v1/cnx_data?id=eq.' + ROW_ID, {
+      method: 'PATCH',
+      headers: {
+        'apikey': sbKey,
+        'Authorization': 'Bearer ' + sbKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ payload, updated_at: new Date().toISOString() })
+    });
+
+    if (res.status === 204 || res.ok) {
+      const check = await fetch(base + '/rest/v1/cnx_data?id=eq.' + ROW_ID + '&select=id', {
+        headers: { 'apikey': sbKey, 'Authorization': 'Bearer ' + sbKey }
+      });
+      const rows = await check.json().catch(() => []);
+      if (!rows.length) {
+        res = await fetch(base + '/rest/v1/cnx_data', {
+          method: 'POST',
+          headers: {
+            'apikey': sbKey,
+            'Authorization': 'Bearer ' + sbKey,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ id: ROW_ID, payload, updated_at: new Date().toISOString() })
+        });
+      }
+    }
+
+    if (!res.ok && res.status !== 204) {
+      const err = await res.text().catch(() => res.status);
+      throw new Error(res.status + ': ' + err);
+    }
+
+    lsSave();
+    setSyncStatus('online', 'SAVED ✓');
+    setTimeout(() => setSyncStatus('online', 'ONLINE'), 2000);
+    _wsBroadcast(payload);
+  } catch(e) {
+    setSyncStatus('error', 'SAVE FAILED');
+    showToast('⚠️ Save failed: ' + e.message, 'err', 5000);
+  } finally {
+    _isSyncing = false;
+  }
+}
+
+async function pullFromSupabase(silent = false) {
+  if (!sbReady || _isSyncing) return;
+  if (!silent) setSyncStatus('syncing', 'CHECKING');
+  try {
+    const rows = await sbFetch('/rest/v1/cnx_data?id=eq.' + ROW_ID + '&select=payload,updated_at');
+
+    if (!rows || !rows.length || !rows[0].payload) {
+      setSyncStatus('online', 'ONLINE');
+      if (!silent) showToast('Connected ✓ No cloud data yet — local is source of truth.', 'ok');
+      return;
+    }
+
+    const remote    = rows[0].payload;
+    const remoteTxN = remote.transactions?.length || 0;
+    const localTxN  = STATE.transactions?.length  || 0;
+    const remoteTs  = remote.lastUpdated || 0;
+    const localTs   = STATE.lastUpdated  || 0;
+
+    if (remoteTxN > localTxN) {
+      STATE = { ...STATE, ...remote };
+      STATE.transactions  = Array.isArray(STATE.transactions)  ? STATE.transactions  : [];
+      STATE.notes         = STATE.notes         || {};
+      STATE.forecastNotes = Array.isArray(STATE.forecastNotes) ? STATE.forecastNotes : [];
+      STATE.additionalIncome = STATE.additionalIncome || {};
+      deriveBalances();
+      lsSave();
+      renderCurrentTab();
+      setSyncStatus('online', 'ONLINE');
+      if (!silent) showToast('↓ Loaded ' + remoteTxN + ' transactions from cloud', 'ok');
+    } else if (remoteTxN === localTxN && remoteTs > localTs) {
+      const mergedTx = STATE.transactions;
+      STATE = { ...STATE, ...remote };
+      STATE.transactions = mergedTx;
+      STATE.notes              = STATE.notes              || {};
+      STATE.forecastNotes      = Array.isArray(STATE.forecastNotes) ? STATE.forecastNotes : [];
+      STATE.additionalIncome   = STATE.additionalIncome   || {};
+      deriveBalances();
+      lsSave();
+      renderCurrentTab();
+      setSyncStatus('online', 'ONLINE');
+    } else {
+      setSyncStatus('online', 'ONLINE');
+    }
+  } catch(e) {
+    const msg = e.message || '';
+    if (msg.includes('404') || msg.includes('does not exist') || msg.includes('relation')) {
+      setSyncStatus('online', 'ONLINE');
+      if (!silent) showToast('⚠️ cnx_data table not found. Run the SQL setup in Supabase.', 'info', 6000);
+      const ms = document.getElementById('modal-status');
+      if (ms) ms.innerHTML = '⚠️ Table <code>cnx_data</code> not found — run the SQL in Step 2 above, then click CONNECT & SYNC again.';
+      return;
+    }
+    setSyncStatus('error', 'RETRY…');
+    if (!silent) showToast('⚠️ ' + msg.slice(0, 80) + ' — retrying in 5s', 'err', 6000);
+    setTimeout(async () => {
+      if (!_isSyncing) {
+        try {
+          await sbFetch('/rest/v1/cnx_data?id=eq.' + ROW_ID + '&select=payload,updated_at');
+          setSyncStatus('online', 'ONLINE');
+        } catch(_) {
+          setSyncStatus('error', 'OFFLINE');
+        }
+      }
+    }, 5000);
+  }
+}
+
+async function forcePush() {
+  _isSyncing = false;
+  setSyncStatus('syncing', 'PUSHING');
+  await pushToSupabase(false);
+}
+
+async function forcePull() {
+  setSyncStatus('syncing', 'PULLING');
+  await pullFromSupabase(false);
+}
+
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(() => pullFromSupabase(true), POLL_MS);
+}
+function stopPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = null;
+}
+
+let _ws = null, _wsRef = 0, _wsHeartbeat = null, _wsRetries = 0;
+const WS_MAX_RETRIES = 4;
+
+function initRealtimeSDK() {
+  startPolling();
+  _connectWS();
+}
+
+function _connectWS() {
+  if (_wsRetries >= WS_MAX_RETRIES) return;
+  try {
+    const wsUrl = sbUrl.replace('https://', 'wss://').replace('http://', 'ws://')
+      + '/realtime/v1/websocket?apikey=' + sbKey + '&vsn=1.0.0';
+    _ws = new WebSocket(wsUrl);
+    _ws.onopen = () => {
+      _wsRetries = 0;
+      _wsSend({ topic:'realtime:cnx-broadcast', event:'phx_join',
+        payload:{ config:{ broadcast:{ self:false }, presence:{ key:'' } } },
+        ref: String(++_wsRef) });
+      _wsHeartbeat = setInterval(() =>
+        _wsSend({ topic:'phoenix', event:'heartbeat', payload:{}, ref:String(++_wsRef) }), 25000);
+    };
+    _ws.onmessage = (e) => {
+      try {
+        const msg = JSON.parse(e.data);
+        if (msg.event === 'phx_reply' && msg.payload?.status === 'ok') {
+          stopPolling();
+          setSyncStatus('online', 'LIVE');
+        }
+        if (msg.event === 'broadcast' && msg.payload?.event === 'state-update') {
+          const remote = msg.payload?.payload;
+          if (!remote) return;
+          const remoteTxN = remote.transactions?.length || 0;
+          const localTxN  = STATE.transactions?.length  || 0;
+          const remoteTs  = remote.lastUpdated || 0;
+          const localTs   = STATE.lastUpdated  || 0;
+          if (remoteTxN > localTxN || (remoteTxN === localTxN && remoteTs > localTs)) {
+            const mergedTx = remoteTxN > localTxN ? remote.transactions : STATE.transactions;
+            STATE = { ...STATE, ...remote };
+            STATE.transactions  = mergedTx;
+            STATE.notes         = STATE.notes         || {};
+            STATE.forecastNotes = Array.isArray(STATE.forecastNotes) ? STATE.forecastNotes : [];
+            deriveBalances();
+            lsSave();
+            renderCurrentTab();
+            showToast('⚡ Live update received', 'ok', 2000);
+            setSyncStatus('online', 'LIVE');
+          }
+        }
+      } catch(_) {}
+    };
+    _ws.onerror = () => {};
+    _ws.onclose = () => {
+      clearInterval(_wsHeartbeat);
+      _ws = null; _wsRetries++;
+      setSyncStatus('online', 'ONLINE');
+      startPolling();
+      setTimeout(_connectWS, Math.min(3000 * _wsRetries, 30000));
+    };
+  } catch(e) { _wsRetries++; }
+}
+
+function _wsSend(msg) {
+  if (_ws?.readyState === WebSocket.OPEN) _ws.send(JSON.stringify(msg));
+}
+function _wsBroadcast(payload) {
+  if (_ws?.readyState === WebSocket.OPEN) {
+    _wsSend({ topic:'realtime:cnx-broadcast', event:'broadcast',
+      payload:{ event:'state-update', payload }, ref:String(++_wsRef) });
+  }
+}
+
+function openSetupModal() {
+  const urlInp = document.getElementById('sb-url-inp');
+  const keyInp = document.getElementById('sb-key-inp');
+  if (urlInp && !urlInp.value) urlInp.value = sbUrl;
+  if (keyInp && !keyInp.value) keyInp.value = sbKey;
+  document.getElementById('setup-modal').style.display = 'flex';
+}
+function skipSetup() {
+  document.getElementById('setup-modal').style.display = 'none';
+}
+function loadSbConfig() {
+  try { const c = localStorage.getItem(SB_CONFIG_KEY); return c ? JSON.parse(c) : null; } catch(e) { return null; }
+}
+async function saveSupabaseConfig() {
+  const url = document.getElementById('sb-url-inp').value.trim().replace(/\/$/, '');
+  const key = document.getElementById('sb-key-inp').value.trim();
+  const status = document.getElementById('modal-status');
+  if (!url || !key) { status.textContent = '⚠️ Both fields required.'; return; }
+  status.textContent = '⏳ Testing connection...';
+  try {
+    const res = await fetch(url + '/rest/v1/cnx_data?limit=1', {
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    localStorage.setItem(SB_CONFIG_KEY, JSON.stringify({ url, key }));
+    sbUrl = url;
+    sbKey = key;
+    status.textContent = '✅ Connected! Re-syncing...';
+    stopPolling();
+    if (_ws) { _ws.close(); _ws = null; }
+    _wsRetries = 0;
+    await pullFromSupabase(false);
+    initRealtimeSDK();
+    setTimeout(() => { document.getElementById('setup-modal').style.display = 'none'; }, 900);
+  } catch(e) {
+    status.textContent = '❌ Failed: ' + e.message;
+  }
+}
+
+const save = () => {
+  lsSave();
+  pushToSupabase(true);
+};
+const load = () => { lsLoad(); };
+const fmt = n => '₹' + Math.abs(Math.round(n)).toLocaleString('en-IN');
+const fmtM = k => { const [y,m]=k.split('-'); return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]+' '+y; };
+const getPlan = key => MDATA.find(m => m.key === key) || MDATA[0];
+const getPhase = key => {
+  const idx = PLAN.findIndex(m => m.key === key);
+  if (idx <= 2) return { id:'1', lbl:'Phase 1 — High Constraint' };
+  if (idx <= 5) return { id:'2', lbl:'Phase 2 — Recovery & Growth' };
+  return { id:'3', lbl:'Phase 3 — Acceleration' };
+};
+
+// ===============================================
+//  TAB SWITCH — CHANGE 2: refresh all dependent tabs
+// ===============================================
+function go(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+  document.getElementById('tab-' + tab).classList.add('on');
+  el.classList.add('on');
+  const ph = getPhase(curMonth);
+  document.getElementById('phase-tag').textContent = 'PHASE ' + ph.id;
+  document.getElementById('hdr-month').textContent = fmtM(curMonth).toUpperCase();
+  // Always re-derive balances before rendering any tab so data is consistent
+  deriveBalances();
+  const renders = { overview: renderOverview, mindmap: renderMindmap, tracker: renderTracker, cards: renderCards, savings: renderSavings, goals: renderGoals, forecast: renderForecast };
+  if (renders[tab]) renders[tab]();
+}
+
+// ===============================================
+//  MONTH STRIP BUILDER
+// ===============================================
+const STRIP_CBS = {};
+function buildStrip(id, onChange) {
+  STRIP_CBS[id] = onChange;
+  const el = document.getElementById(id);
+  el.innerHTML = PLAN.map(m => {
+    const hasTx = STATE.transactions.some(t => t.month === m.key);
+    return `<button class="mp${m.key===curMonth?' on':''}${hasTx?' has':''}"
+      onclick="selMonth('${m.key}','${id}',this)">${m.lbl.slice(0,3)}</button>`;
+  }).join('');
+}
+
+function selMonth(key, stripId, btn) {
+  curMonth = key;
+  document.getElementById('phase-tag').textContent = 'PHASE ' + getPhase(key).id;
+  document.getElementById('hdr-month').textContent = fmtM(key).toUpperCase();
+  document.querySelectorAll('#'+stripId+' .mp').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  const cb = STRIP_CBS[stripId];
+  if (typeof cb === 'function') cb();
+}
+
+// ===============================================
+//  CHART HELPER
+// ===============================================
+function renderChart(elId, labels, datasets) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const allVals = datasets.flatMap(d => d.data.map(v => Math.abs(v)));
+  const max = Math.max(...allVals, 1);
+  el.innerHTML = labels.map((lbl, i) => {
+    const bars = datasets.map(d => `
+      <div style="flex:1;background:${d.color};height:${(Math.abs(d.data[i]||0)/max)*120}px;
+        border-radius:2px 2px 0 0;opacity:.82;transition:opacity .2s;min-width:6px"
+        title="${lbl}: ${fmt(d.data[i]||0)}"
+        onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.82"></div>`).join('');
+    const valTip = datasets.map(d => fmt(d.data[i]||0)).join(' / ');
+    return `
+      <div class="cb-wrap">
+        <div class="cb-val" id="${elId}-v${i}"></div>
+        <div class="cb-outer" style="height:120px;display:flex;align-items:flex-end;gap:2px"
+          onmouseenter="document.getElementById('${elId}-v${i}').textContent='${valTip}'"
+          onmouseleave="document.getElementById('${elId}-v${i}').textContent=''">
+          ${bars}
+        </div>
+        <div class="cb-lbl">${lbl.slice(0,3)}</div>
+      </div>`;
+  }).join('');
+}
+
+// ===============================================
+//  SHARED COMPUTED VALUES — used across tabs
+// ===============================================
+function getMonthTotals(month) {
+  const md = getPlan(month);
+  const addInc = getAdditionalIncome(month);
+  const totalIncome = INCOME + addInc;
+  const loggedTots = STATE.transactions.filter(t => t.month === month).reduce((s,t) => s+t.amt, 0);
+  const remaining = totalIncome - loggedTots;
+  const variance = md.totalExp - loggedTots;
+  const txCount = STATE.transactions.filter(t => t.month === month).length;
+  return { md, addInc, totalIncome, loggedTots, remaining, variance, txCount };
+}
+
+// ===============================================
+//  TAB 1 · OVERVIEW — CHANGE 2: uses shared getMonthTotals
+// ===============================================
+function renderOverview() {
+  buildStrip('ov-strip', renderOverview);
+  document.getElementById('ov-month-lbl').textContent = fmtM(curMonth);
+  const { md, addInc, totalIncome, loggedTots, remaining, variance, txCount } = getMonthTotals(curMonth);
+
+  // CHANGE 2: Show total income (including additional) in overview
+  document.getElementById('ov-income').textContent = fmt(totalIncome);
+  document.getElementById('ov-income-s').textContent = addInc > 0 ? 'Fixed + ' + fmt(addInc) + ' extra' : 'Fixed take-home';
+
+  document.getElementById('ov-exp').textContent = fmt(md.totalExp);
+  document.getElementById('ov-exp-s').textContent = md.lbl + ' forecast';
+  document.getElementById('ov-ef').textContent = fmt(md.ef);
+  document.getElementById('ov-ef-s').textContent = 'Plan: ' + md.lbl;
+  document.getElementById('ov-buf').textContent = fmt(md.buf);
+  document.getElementById('ov-buf-s').textContent = md.buf >= 0 ? 'Available' : '⚠️ Tight';
+
+  // CC — uses derived STATE values (consistent across tabs, includes CC expenses)
+  const ccTotal = (STATE.cc1Total || CC1_TOTAL) + (STATE.cc2Total || CC2_TOTAL);
+  const ccPaid = STATE.cc1Paid + STATE.cc2Paid;
+  const ccOut = Math.max(ccTotal - ccPaid, 0);
+  const ccPct = ccTotal > 0 ? Math.min((ccPaid/ccTotal)*100, 100) : 0;
+  document.getElementById('ov-cc-total').textContent = fmt(ccOut);
+  document.getElementById('ov-cc-bar').style.width = ccPct + '%';
+  document.getElementById('ov-cc-paid').textContent = 'PAID: ' + fmt(ccPaid);
+  document.getElementById('ov-cc-pct').textContent = ccPct.toFixed(1) + '% CLEARED';
+
+  // Alerts
+  const alerts = [];
+  if (md.buf < 0) alerts.push({ t:'r', m:`⚠️ ${md.lbl} is a tight month. Buffer is -₹${Math.abs(md.buf).toLocaleString('en-IN')}. Stay disciplined.` });
+  if (ccOut <= 0) alerts.push({ t:'g', m:'🎉 Both CC cards cleared! Now accelerate EF and buffer.' });
+  else alerts.push({ t:'w', m:`💳 CC outstanding: ${fmt(ccOut)}. Paying down systematically.` });
+  if (md.key === VEHICLE_MONTH) alerts.push({ t:'w', m:'🏍 September: Vehicle purchase month. ₹50k from buffer. Confirm buffer is ready.' });
+  if (['2026-10','2026-11','2026-12'].includes(md.key)) alerts.push({ t:'b', m:'🚀 Phase 3 active! EF at ₹' + md.cumEF.toLocaleString('en-IN') + '. Buffer rebuilding.' });
+  alerts.push({ t:'g', m:`📊 Forecast EF by end of ${md.lbl}: ${fmt(md.cumEF)}` });
+  document.getElementById('ov-alerts').innerHTML = alerts.slice(0,4).map(a => `<div class="alert al-${a.t}">${a.m}</div>`).join('');
+
+  // CHANGE 1 & 2: Logged spend — uses shared totals, no actual balance
+  document.getElementById('ov-log-month').textContent = fmtM(curMonth);
+  const logPct = Math.min((loggedTots / md.totalExp) * 100, 120);
+  document.getElementById('ov-log-detail').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px">
+      <div><div class="sl">LOGGED THIS MONTH</div><div style="font-family:var(--mn);font-size:18px;font-weight:700;color:var(--rd)">${fmt(loggedTots)}</div></div>
+      <div><div class="sl">PLANNED TOTAL</div><div style="font-family:var(--mn);font-size:18px;font-weight:700;color:var(--ac)">${fmt(md.totalExp)}</div></div>
+      <div><div class="sl">VARIANCE</div><div style="font-family:var(--mn);font-size:18px;font-weight:700;color:${variance>=0?'var(--gn)':'var(--rd)'}">${variance>=0?fmt(variance)+' under':fmt(Math.abs(variance))+' over'}</div></div>
+      <div>
+        <div class="sl">BALANCE REMAINING</div>
+        <div style="font-family:var(--mn);font-size:18px;font-weight:700;color:var(--go)">${fmt(remaining)}</div>
+        ${addInc > 0 ? `<div style="font-size:9px;color:var(--gn);font-family:var(--mn)">incl. +${fmt(addInc)} extra income</div>` : ''}
+      </div>
+    </div>
+    <div class="pb h8" style="margin-bottom:4px">
+      <div class="pbf" style="width:${Math.min(logPct,100)}%;background:${logPct>100?'var(--rd)':logPct>80?'var(--go)':'var(--ac)'}"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);font-family:var(--mn)">
+      <span>LOGGED: ${logPct.toFixed(0)}% of plan</span><span>${txCount} transactions</span>
+    </div>`;
+
+  // Cashflow
+  const items = [
+    { l:'Fixed Expenses', a:md.fixed, c:'var(--rd)' },
+    { l:'Core (CNIS + LIC)', a:md.core, c:'var(--pu)' },
+    { l:'Credit Card 1', a:md.cc1, c:'var(--rd)' },
+    { l:'Credit Card 2', a:md.cc2, c:'var(--or)' },
+    { l:'Purchase Fund', a:md.purchase||0, c:'#ff6b6b' },
+    { l:'Emergency Fund', a:md.ef, c:'var(--gn)' },
+    { l:'Buffer', a:md.buf, c:'var(--go)' },
+  ].filter(i => i.a !== 0);
+  const maxA = Math.max(...items.map(i => Math.abs(i.a)));
+  document.getElementById('ov-cf').innerHTML = items.map(i => `
+    <div class="cf-row">
+      <div class="cf-l">${i.l}</div>
+      <div class="cf-b"><div class="pb"><div class="pbf" style="width:${(Math.abs(i.a)/maxA)*100}%;background:${i.c}"></div></div></div>
+      <div class="cf-v" style="color:${i.c}">${fmt(i.a)}</div>
+      <div class="cf-p">${((Math.abs(i.a)/INCOME)*100).toFixed(0)}%</div>
+    </div>`).join('');
+
+  // Priority buckets — CHANGE 2: uses consistent derived STATE values
+  const buckets = [
+    { cls:'p0', tag:'P0 · CRITICAL', col:'var(--gn)',  name:'🛡 Emergency Fund', target:EF_TARGET,  saved:STATE.efBalance,  note:'Liquid MF · Target ₹2L' },
+    { cls:'p1', tag:'P1 · ONGOING',  col:'var(--go)',  name:'💰 Buffer Reserve',  target:100000,     saved:Math.max(STATE.bufBalance,0), note:'Rebuild after bike buy' },
+    { cls:'p2', tag:'P2 · SEP',      col:'var(--go)',  name:'🏍 2nd Hand Bike',   target:VEHICLE_COST, saved:STATE.bikeAmt, note:'₹50k · Cash · Sep 2026' },
+    { cls:'p3', tag:'P3 · JAN 2027', col:'var(--pu)',  name:'🏔 RE Himalayan',    target:500000,     saved:STATE.reAmt,     note:'On hold · Starts Jan 27' },
+  ];
+  document.getElementById('ov-pbuckets').innerHTML = buckets.map(b => {
+    const pct = Math.min((b.saved/b.target)*100, 100);
+    return `<div class="p-card ${b.cls}">
+      <div class="pc-tag" style="color:${b.col}">${b.tag}</div>
+      <div class="pc-name">${b.name}</div>
+      <div class="pc-tgt">Target: ${fmt(b.target)}</div>
+      <div class="pc-sv" style="color:${b.col}">${fmt(b.saved)}</div>
+      <div class="pb"><div class="pbf" style="width:${pct}%;background:${b.col}"></div></div>
+      <div class="pc-foot"><span>${pct.toFixed(0)}%</span><span style="color:var(--t3)">${b.note}</span></div>
+    </div>`;
+  }).join('');
+
+  // Timeline
+  const tl = [
+    { dt:'Apr 2026', t:'Phase 1 — Reset Month', d:'EF: ₹8k (reduced). Buffer: ₹0. CC2: ₹35k. Rebuilding starts.' },
+    { dt:'May–Jun 2026', t:'Constrained Recovery', d:'CC1: ₹17k/mo (₹12k friend + ₹5k card). ₹10k/mo purchase fund. EF: ₹10k/mo. Buffer: ₹2.7k/mo.' },
+    { dt:'Jul–Sep 2026', t:'Acceleration Phase', d:'CC1 back to ₹12k. Purchase done. EF: ₹25k/mo. EF crosses ₹50k 🎯 then ₹1L 🎯' },
+    { dt:'Sep 2026', t:'🏍 Buy the Bike', d:'₹50k from buffer. Buffer resets.' },
+    { dt:'Oct 2026', t:'CC1 Final Payment', d:'₹11k to friend — CC1 cleared ✅. EF: ₹26k/mo.' },
+    { dt:'Nov 2026', t:'Major Relief', d:'CC1 done. EF: ₹30k/mo. Buffer: ₹19.7k/mo. EF crosses ₹1.5L 🎯' },
+    { dt:'Dec 2026', t:'Year-End Strong', d:'CC2 done ✅. EF: ₹35k/mo. Cumulative EF ~₹1.94L. Buffer rebuilt.' },
+    { dt:'Jan 2027', t:'Investment Mode', d:'Plan RE Himalayan SIP. ₹8k/mo Balanced Adv Fund.' },
+  ];
+  document.getElementById('ov-timeline').innerHTML = tl.map((t,i) => `
+    <div style="display:flex;gap:9px;margin-bottom:11px">
+      <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--s3);border:2px solid var(--b2)"></div>
+        ${i<tl.length-1?'<div style="width:1px;flex:1;background:var(--b1);margin-top:3px;min-height:16px"></div>':''}
+      </div>
+      <div style="flex:1;padding-bottom:3px">
+        <div style="font-family:var(--mn);font-size:8px;color:var(--t3);letter-spacing:1px">${t.dt}</div>
+        <div style="font-size:12px;font-weight:600;color:var(--t1);margin:1px 0">${t.t}</div>
+        <div style="font-size:10px;color:var(--t3);line-height:1.4">${t.d}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ===============================================
+//  TAB 2 · MIND MAP
+// ===============================================
+function renderMindmap() {
+  buildStrip('mm-strip', renderMindmap);
+  const md = getPlan(curMonth);
+  const addInc = getAdditionalIncome(curMonth);
+  const totalIncome = INCOME + addInc;
+  document.getElementById('mm-month-lbl').textContent = fmtM(curMonth);
+
+  // CHANGE 2: Update center node to reflect total income
+  const centerEl = document.getElementById('mm-center');
+  if (addInc > 0) {
+    centerEl.innerHTML = fmt(totalIncome).replace('₹','') + '<br><span style="font-size:7px;letter-spacing:2px">INCOME</span>';
+  } else {
+    centerEl.innerHTML = '₹1.4L<br><span style="font-size:7px;letter-spacing:2px">INCOME</span>';
+  }
+
+  const canvas = document.getElementById('mm-canvas');
+  canvas.querySelectorAll('.mm-node').forEach(n => n.remove());
+
+  const nodes = [
+    { lbl:'FIXED EXPENSES', val:fmt(md.fixed), pct:((md.fixed/totalIncome)*100).toFixed(0)+'%', col:'var(--rd)', x:'7%',  y:'10%' },
+    { lbl:'CORE (CNIS+LIC)', val:fmt(md.core),  pct:((md.core/totalIncome)*100).toFixed(0)+'%',  col:'var(--pu)', x:'70%', y:'8%'  },
+    { lbl:'CC1 PAYMENT',     val:md.cc1>0?fmt(md.cc1):'CLEARED', pct:((md.cc1/totalIncome)*100).toFixed(0)+'%', col:md.cc1>0?'var(--rd)':'var(--gn)', x:'85%', y:'35%' },
+    { lbl:'CC2 PAYMENT',     val:md.cc2>0?fmt(md.cc2):'CLEARED', pct:((md.cc2/totalIncome)*100).toFixed(0)+'%', col:md.cc2>0?'var(--or)':'var(--gn)', x:'78%', y:'65%' },
+    { lbl:'EMERGENCY FUND',  val:fmt(md.ef),  pct:((md.ef/totalIncome)*100).toFixed(0)+'%',  col:'var(--gn)', x:'48%', y:'80%' },
+    { lbl:'BUFFER',          val:fmt(md.buf), pct:((Math.abs(md.buf)/totalIncome)*100).toFixed(0)+'%', col:md.buf<0?'var(--rd)':'var(--go)', x:'12%', y:'68%' },
+    { lbl:'CUMULATIVE EF',   val:fmt(md.cumEF), pct:'', col:'var(--gn)', x:'5%', y:'38%' },
+  ];
+
+  nodes.forEach(n => {
+    const el = document.createElement('div');
+    el.className = 'mm-node';
+    el.style.cssText = `left:${n.x};top:${n.y};border-color:${n.col}40`;
+    el.innerHTML = `<div class="mn-l" style="color:${n.col}">${n.lbl}</div><div class="mn-v" style="color:${n.col}">${n.val}</div>${n.pct?`<div class="mn-p">${n.pct} of income</div>`:''}`;
+    canvas.appendChild(el);
+  });
+
+  setTimeout(() => {
+    const svg = document.getElementById('mm-svg');
+    svg.innerHTML = '';
+    const ctr = document.getElementById('mm-center').getBoundingClientRect();
+    const wr = canvas.getBoundingClientRect();
+    const cx = ctr.left - wr.left + ctr.width/2, cy = ctr.top - wr.top + ctr.height/2;
+    canvas.querySelectorAll('.mm-node').forEach((node, i) => {
+      const nr = node.getBoundingClientRect();
+      const nx = nr.left - wr.left + nr.width/2, ny = nr.top - wr.top + nr.height/2;
+      const cpx1 = cx + (nx - cx) * 0.4;
+      const cpy1 = cy;
+      const cpx2 = nx - (nx - cx) * 0.4;
+      const cpy2 = ny;
+      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d', `M${cx},${cy} C${cpx1},${cpy1} ${cpx2},${cpy2} ${nx},${ny}`);
+      path.setAttribute('stroke', nodes[i].col);
+      path.setAttribute('stroke-width','1.5');
+      path.setAttribute('stroke-opacity','0.35');
+      path.setAttribute('stroke-dasharray','5 3');
+      path.setAttribute('fill','none');
+      const len = path.getTotalLength ? path.getTotalLength() : 200;
+      path.style.strokeDashoffset = len;
+      path.style.transition = `stroke-dashoffset 0.8s ease ${i * 0.1}s`;
+      svg.appendChild(path);
+      requestAnimationFrame(() => { path.style.strokeDashoffset = '0'; });
+    });
+  }, 100);
+
+  // Weights — CHANGE 2: uses totalIncome
+  const items = [
+    { l:'Fixed', a:md.fixed, c:'var(--rd)' },
+    { l:'CNIS+LIC', a:md.core, c:'var(--pu)' },
+    { l:'CC1', a:md.cc1, c:'var(--rd)' },
+    { l:'CC2', a:md.cc2, c:'var(--or)' },
+    { l:'Purchase', a:md.purchase||0, c:'#ff6b6b' },
+    { l:'EF', a:md.ef, c:'var(--gn)' },
+    { l:'Buffer', a:Math.max(md.buf,0), c:'var(--go)' },
+  ].filter(i => i.a > 0);
+  document.getElementById('mm-weights').innerHTML = items.map(i => `
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+      <div style="width:8px;height:8px;background:${i.c};border-radius:2px;flex-shrink:0"></div>
+      <div style="flex:1;font-size:11px;color:var(--t2)">${i.l}</div>
+      <div style="font-family:var(--mn);font-size:11px;font-weight:700;color:${i.c}">${fmt(i.a)}</div>
+      <div style="width:60px"><div class="pb"><div class="pbf" style="width:${(i.a/totalIncome)*100}%;background:${i.c}"></div></div></div>
+    </div>`).join('');
+
+  // Context
+  const ph = getPhase(curMonth);
+  document.getElementById('mm-context').innerHTML = `
+    <div class="alert al-b" style="margin-bottom:10px">📍 ${ph.lbl}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div><div class="sl">TOTAL EXPENSES</div><div style="font-family:var(--mn);font-size:16px;color:var(--rd)">${fmt(md.totalExp)}</div></div>
+      <div><div class="sl">EF + BUFFER</div><div style="font-family:var(--mn);font-size:16px;color:var(--gn)">${fmt(md.ef + Math.max(md.buf,0))}</div></div>
+      <div><div class="sl">DEBT LOAD</div><div style="font-family:var(--mn);font-size:16px;color:var(--or)">${fmt(md.debt)}</div></div>
+      <div><div class="sl">CUM. EF BY EOMonth</div><div style="font-family:var(--mn);font-size:16px;color:var(--gn)">${fmt(md.cumEF)}</div></div>
+    </div>
+    ${md.buf < 0 ? '<div class="alert al-r mt" style="margin-top:10px">⚠️ Buffer is negative this month. EF is protected. Absorb shortfall.</div>' : ''}`;
+}
+
+// ===============================================
+//  TAB 3 · DAILY TRACKER
+// ===============================================
+function calculateTotals() {
+  const exps = STATE.transactions.filter(t => t.month === curMonth);
+  return {
+    total: exps.reduce((s,t) => s + t.amt, 0),
+    bycat: exps.reduce((o,t) => { o[t.cat] = (o[t.cat]||0)+t.amt; return o; }, {}),
+    count: exps.length,
+    exps
+  };
+}
+
+function deriveBalances() {
+  const txEF  = (STATE.transactions||[]).filter(t => t.cat === 'EF').reduce((s,t) => s+t.amt, 0);
+  const txBuf = (STATE.transactions||[]).filter(t => t.cat === 'Buffer').reduce((s,t) => s+t.amt, 0);
+  const efAdj = (STATE.efLedger||[]).reduce((s,e) => s + (e.type==='deduct' ? -e.amt : e.amt), 0);
+  const bufAdj = (STATE.bufLedger||[]).reduce((s,e) => s + (e.type==='deduct' ? -e.amt : e.amt), 0);
+  STATE.efBalance  = txEF  + efAdj;
+  STATE.bufBalance = txBuf + bufAdj;
+  STATE.efAdjust  = efAdj;
+  STATE.bufAdjust = bufAdj;
+  const cc1Payments = (STATE.ccPayments||[]).filter(p=>p.card===1).reduce((s,p)=>s+p.amt,0);
+  const cc2Payments = (STATE.ccPayments||[]).filter(p=>p.card===2).reduce((s,p)=>s+p.amt,0);
+  // CC expenses add to the outstanding debt
+  const cc1Expenses = (STATE.ccExpenses||[]).filter(e=>e.card===1).reduce((s,e)=>s+e.amt,0);
+  const cc2Expenses = (STATE.ccExpenses||[]).filter(e=>e.card===2).reduce((s,e)=>s+e.amt,0);
+  // Effective total = original debt + new expenses
+  STATE.cc1Total = CC1_TOTAL + cc1Expenses;
+  STATE.cc2Total = CC2_TOTAL + cc2Expenses;
+  STATE.cc1Paid = Math.min(cc1Payments, STATE.cc1Total);
+  STATE.cc2Paid = Math.min(cc2Payments, STATE.cc2Total);
+  STATE.bikeAmt = (STATE.bikeLog||[]).reduce((s,e)=>s+e.amt,0);
+  STATE.reAmt   = (STATE.reLog||[]).reduce((s,e)=>s+e.amt,0);
+}
+
+// -- Additional income helpers --
+function getAdditionalIncome(month) {
+  return ((STATE.additionalIncome || {})[month] || []).reduce((s,e) => s + e.amt, 0);
+}
+function addAdditionalIncome(month) {
+  const amtEl = document.getElementById('ai-amt-' + month);
+  const srcEl = document.getElementById('ai-src-' + month);
+  const amt = parseFloat(amtEl?.value) || 0;
+  const src = srcEl?.value.trim() || 'Additional';
+  if (!amt) return;
+  if (!STATE.additionalIncome) STATE.additionalIncome = {};
+  if (!STATE.additionalIncome[month]) STATE.additionalIncome[month] = [];
+  STATE.additionalIncome[month].push({ id: Date.now(), amt, source: src, date: new Date().toISOString().split('T')[0] });
+  if (amtEl) amtEl.value = '';
+  if (srcEl) srcEl.value = '';
+  save();
+  // CHANGE 1: Auto-update balance — just re-render, remaining auto-calculated
+  renderTracker();
+  renderOverview();
+}
+function deleteAdditionalIncome(month, id) {
+  if (!STATE.additionalIncome?.[month]) return;
+  STATE.additionalIncome[month] = STATE.additionalIncome[month].filter(e => e.id !== id);
+  save();
+  renderTracker();
+  renderOverview();
+}
+
+function addTransaction() {
+  const desc = document.getElementById('tr-desc').value.trim();
+  const cat  = document.getElementById('tr-cat').value;
+  const amt  = parseFloat(document.getElementById('tr-amt').value);
+  const date = document.getElementById('tr-date').value;
+  const note = document.getElementById('tr-note').value.trim();
+  if (!desc || !amt || !date) { alert('Please fill description, amount and date.'); return; }
+  STATE.transactions.push({ id: Date.now(), month: curMonth, desc, cat, amt, date, note });
+  document.getElementById('tr-desc').value = '';
+  document.getElementById('tr-amt').value = '';
+  document.getElementById('tr-note').value = '';
+  deriveBalances();
+  save();
+  renderTracker();
+  if (document.getElementById('tab-savings').classList.contains('on')) renderSavings();
+}
+
+function deleteTransaction(id) {
+  STATE.transactions = STATE.transactions.filter(t => t.id !== id);
+  deriveBalances();
+  save();
+  renderTracker();
+  if (document.getElementById('tab-savings').classList.contains('on')) renderSavings();
+}
+
+function renderTracker() {
+  buildStrip('tr-strip', renderTracker);
+  document.getElementById('tr-month-lbl').textContent = fmtM(curMonth);
+  document.getElementById('tr-date').value = new Date().toISOString().split('T')[0];
+
+  // CHANGE 1 & 2: Use shared totals — balance auto-includes additional income
+  const { md, addInc, totalIncome, loggedTots, remaining, variance, txCount } = getMonthTotals(curMonth);
+  const tots = calculateTotals();
+
+  document.getElementById('tr-total').textContent = fmt(loggedTots);
+  document.getElementById('tr-forecast').textContent = fmt(md.totalExp);
+  document.getElementById('tr-rem').textContent = fmt(remaining);
+  const varEl = document.getElementById('tr-var');
+  varEl.textContent = variance >= 0 ? fmt(variance)+' under' : fmt(Math.abs(variance))+' over';
+  varEl.style.color = variance >= 0 ? 'var(--gn)' : 'var(--rd)';
+
+  // CHANGE 1: Replaced actual balance manual entry with auto-calculated panel
+  const aiEntries = (STATE.additionalIncome?.[curMonth] || []);
+  document.getElementById('tr-extra-panel').innerHTML = `
+    <div class="g2" style="gap:11px">
+      <!-- Additional Income -->
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:13px">
+        <div class="ct" style="margin-bottom:9px">
+          <div class="ct-l" style="color:var(--gn)">Additional Income</div>
+          <span style="font-family:var(--mn);font-size:11px;font-weight:700;color:var(--gn)">${fmt(addInc)}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:6px;margin-bottom:8px;align-items:flex-end">
+          <div class="fl" style="margin:0">
+            <label class="lbl">Source (FD, Freelance…)</label>
+            <input class="inp" id="ai-src-${curMonth}" placeholder="e.g. FD interest, Freelance"/>
+          </div>
+          <div class="fl" style="margin:0">
+            <label class="lbl">Amount (₹)</label>
+            <div class="pfx"><span class="px">₹</span><input class="inp" type="number" id="ai-amt-${curMonth}" placeholder="0"/></div>
+          </div>
+          <button class="btn btn-p btn-sm" style="height:36px;align-self:flex-end" onclick="addAdditionalIncome('${curMonth}')">ADD</button>
+        </div>
+        ${aiEntries.length ? `<div style="max-height:110px;overflow-y:auto">${aiEntries.slice().reverse().map(e => `
+          <div class="tx" style="padding:5px 0">
+            <div style="flex:1">
+              <div style="font-size:11px;font-weight:500;color:var(--t1)">${e.source}</div>
+              <div style="font-size:9px;color:var(--t3);font-family:var(--mn)">${e.date}</div>
+            </div>
+            <div style="font-family:var(--mn);font-size:12px;font-weight:700;color:var(--gn)">+${fmt(e.amt)}</div>
+            <button class="tx-del" onclick="deleteAdditionalIncome('${curMonth}',${e.id})">✕</button>
+          </div>`).join('')}</div>` : `<div style="font-size:10px;color:var(--t3);font-family:var(--mn)">No additional income logged</div>`}
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--b1)">
+          <div style="display:flex;justify-content:space-between;font-family:var(--mn);font-size:10px;color:var(--t2)">
+            <span>Fixed income</span><span>${fmt(INCOME)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-family:var(--mn);font-size:10px;color:var(--gn)">
+            <span>+ Additional</span><span>+${fmt(addInc)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-family:var(--mn);font-size:13px;font-weight:700;color:var(--ac);margin-top:4px;padding-top:4px;border-top:1px solid var(--b2)">
+            <span>Total Income</span><span>${fmt(totalIncome)}</span>
+          </div>
+        </div>
+      </div>
+      <!-- CHANGE 1: Auto-calculated balance (no manual entry) -->
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:13px">
+        <div class="ct" style="margin-bottom:9px">
+          <div class="ct-l" style="color:var(--go)">Balance Remaining</div>
+          <span class="bdg bdg-b" style="font-size:8px">AUTO-CALCULATED</span>
+        </div>
+        <div style="margin-bottom:14px">
+          <div class="sl">CURRENT BALANCE</div>
+          <div style="font-family:var(--mn);font-size:28px;font-weight:700;color:${remaining>=0?'var(--go)':'var(--rd)'}">${fmt(remaining)}</div>
+          <div style="font-size:9px;color:var(--t3);margin-top:2px">${fmt(totalIncome)} income − ${fmt(loggedTots)} logged</div>
+        </div>
+        <div class="pb h10" style="margin-bottom:8px">
+          <div class="pbf" style="width:${Math.min(Math.max((remaining/totalIncome)*100,0),100)}%;background:${remaining/totalIncome>0.3?'var(--gn)':remaining/totalIncome>0.1?'var(--go)':'var(--rd)'}"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+          <div style="background:var(--s3);border-radius:6px;padding:8px;text-align:center">
+            <div class="sl">SPENT</div>
+            <div style="font-family:var(--mn);font-size:14px;font-weight:700;color:var(--rd)">${fmt(loggedTots)}</div>
+            <div style="font-size:9px;color:var(--t3)">${totalIncome>0?((loggedTots/totalIncome)*100).toFixed(0):'0'}% of income</div>
+          </div>
+          <div style="background:var(--s3);border-radius:6px;padding:8px;text-align:center">
+            <div class="sl">AVAILABLE</div>
+            <div style="font-family:var(--mn);font-size:14px;font-weight:700;color:var(--gn)">${fmt(Math.max(remaining,0))}</div>
+            <div style="font-size:9px;color:var(--t3)">${totalIncome>0?((Math.max(remaining,0)/totalIncome)*100).toFixed(0):'0'}% of income</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  // Cat filters — CHANGE 3: includes new categories
+  const allCats = ['All', ...Object.keys(CAT_ICONS)];
+  document.getElementById('cat-filters').innerHTML = allCats.map(c => `
+    <button class="bdg ${c===trCatFilter?'bdg-b':'bdg-w'}" style="cursor:pointer;padding:4px 10px;font-size:10px"
+      onclick="trCatFilter='${c}';renderTracker()">${c}</button>`).join('');
+
+  // Cat grid
+  const catGrid = document.getElementById('tr-cat-grid');
+  if (!Object.keys(tots.bycat).length) {
+    catGrid.innerHTML = '<div style="color:var(--t3);font-size:10px;font-family:var(--mn);padding:6px 0">NO ENTRIES YET</div>';
+  } else {
+    catGrid.innerHTML = Object.entries(tots.bycat).sort((a,b)=>b[1]-a[1]).map(([cat,amt]) => `
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:7px;padding:9px;text-align:center">
+        <div style="font-size:15px;margin-bottom:2px">${CAT_ICONS[cat]||'📦'}</div>
+        <div style="font-size:8px;color:var(--t3);font-family:var(--mn);letter-spacing:.5px">${cat}</div>
+        <div style="font-family:var(--mn);font-size:12px;font-weight:700;color:${CAT_COLORS[cat]||'var(--ac)'};margin-top:2px">${fmt(amt)}</div>
+        <div style="margin-top:4px"><div class="pb"><div class="pbf" style="width:${Math.min((amt/totalIncome)*100,100)}%;background:${CAT_COLORS[cat]||'var(--ac)'}"></div></div></div>
+      </div>`).join('');
+  }
+
+  // Transaction list
+  let filtered = tots.exps;
+  if (trCatFilter !== 'All') filtered = filtered.filter(t => t.cat === trCatFilter);
+  filtered.sort((a,b) => b.date.localeCompare(a.date));
+  document.getElementById('tr-count').textContent = filtered.length + ' entries';
+  const listEl = document.getElementById('tr-list');
+  if (!filtered.length) {
+    listEl.innerHTML = '<div style="padding:18px;text-align:center;color:var(--t3);font-family:var(--mn);font-size:10px">NO TRANSACTIONS MATCH</div>';
+    return;
+  }
+  listEl.innerHTML = filtered.map(t => `
+    <div class="tx">
+      <div class="tx-ic">${CAT_ICONS[t.cat]||'📦'}</div>
+      <div style="flex:1">
+        <div class="tx-n">${t.desc}</div>
+        <div class="tx-d">${t.cat} · ${t.date}${t.note?' · '+t.note:''}</div>
+      </div>
+      <div class="tx-a">-${fmt(t.amt)}</div>
+      <button class="tx-del" onclick="deleteTransaction(${t.id})">✕</button>
+    </div>`).join('');
+}
+
+// ===============================================
+//  TAB 4 · CC
+// ===============================================
+function addCCExpense() {
+  const desc = document.getElementById('ccx-desc').value.trim();
+  const card = parseInt(document.getElementById('ccx-card').value);
+  const amt  = parseFloat(document.getElementById('ccx-amt').value);
+  const date = document.getElementById('ccx-date').value;
+  const note = document.getElementById('ccx-note').value.trim();
+  if (!desc || !amt || !date) { alert('Please fill description, amount and date.'); return; }
+  if (!STATE.ccExpenses) STATE.ccExpenses = [];
+  STATE.ccExpenses.push({ id: Date.now(), card, desc, amt, date, note });
+  document.getElementById('ccx-desc').value = '';
+  document.getElementById('ccx-amt').value = '';
+  document.getElementById('ccx-note').value = '';
+  deriveBalances(); save(); renderCards();
+}
+
+function deleteCCExpense(id) {
+  STATE.ccExpenses = (STATE.ccExpenses||[]).filter(e => e.id !== id);
+  deriveBalances(); save(); renderCards();
+}
+
+function logCC(card) {
+  const inpEl = document.getElementById('cc'+card+'-inp');
+  const noteEl = document.getElementById('cc'+card+'-note');
+  const v = parseFloat(inpEl.value) || 0;
+  if (!v) return;
+  if (!STATE.ccPayments) STATE.ccPayments = [];
+  STATE.ccPayments.push({
+    id: Date.now(), card, amt: v,
+    date: new Date().toISOString().split('T')[0],
+    note: noteEl ? noteEl.value.trim() : ''
+  });
+  inpEl.value = '';
+  if (noteEl) noteEl.value = '';
+  deriveBalances();
+  save(); renderCards();
+}
+
+function deleteCC(id) {
+  STATE.ccPayments = (STATE.ccPayments||[]).filter(p => p.id !== id);
+  deriveBalances();
+  save(); renderCards();
+}
+
+function logCCPayment() {
+  const v = parseFloat(document.getElementById('cc-pay-inp').value) || 0;
+  if (!v) return;
+  if (!STATE.ccPayments) STATE.ccPayments = [];
+  const half = Math.round(v / 2);
+  STATE.ccPayments.push({ id: Date.now(),   card:1, amt:half, date:new Date().toISOString().split('T')[0], note:'Split payment' });
+  STATE.ccPayments.push({ id: Date.now()+1, card:2, amt:v-half, date:new Date().toISOString().split('T')[0], note:'Split payment' });
+  document.getElementById('cc-pay-inp').value = '';
+  deriveBalances();
+  save(); renderOverview();
+}
+
+function renderCards() {
+  deriveBalances();
+
+  // -- Set date default for CC expense form --
+  const ccxDateEl = document.getElementById('ccx-date');
+  if (ccxDateEl && !ccxDateEl.value) ccxDateEl.value = new Date().toISOString().split('T')[0];
+
+  // -- CC Expenses section --
+  const ccExps = STATE.ccExpenses || [];
+  const monthExps = ccExps.filter(e => {
+    // Show expenses for current selected month
+    if (!e.date) return false;
+    const key = e.date.slice(0,7); // 'YYYY-MM'
+    return key === curMonth;
+  });
+  const cc1ExpTotal = monthExps.filter(e => e.card===1).reduce((s,e) => s+e.amt, 0);
+  const cc2ExpTotal = monthExps.filter(e => e.card===2).reduce((s,e) => s+e.amt, 0);
+  document.getElementById('ccx-cc1-total').textContent = fmt(cc1ExpTotal);
+  document.getElementById('ccx-cc2-total').textContent = fmt(cc2ExpTotal);
+  document.getElementById('ccx-count').textContent = monthExps.length + ' entries';
+
+  const ccxList = document.getElementById('ccx-list');
+  if (!monthExps.length) {
+    ccxList.innerHTML = '<div style="padding:12px;text-align:center;color:var(--t3);font-size:10px;font-family:var(--mn)">NO CC EXPENSES THIS MONTH</div>';
+  } else {
+    ccxList.innerHTML = monthExps.slice().reverse().map(e => `
+      <div class="tx">
+        <div class="tx-ic" style="background:${e.card===1?'var(--rr)':'var(--od)'}">${e.card===1?'C1':'C2'}</div>
+        <div style="flex:1">
+          <div class="tx-n">${e.desc}</div>
+          <div class="tx-d">CC${e.card} · ${e.date}${e.note?' · '+e.note:''}</div>
+        </div>
+        <div class="tx-a">-${fmt(e.amt)}</div>
+        <button class="tx-del" onclick="deleteCCExpense(${e.id})">✕</button>
+      </div>`).join('');
+  }
+
+  // -- CC1 --
+  const cc1Pct = Math.min((STATE.cc1Paid/STATE.cc1Total)*100, 100);
+  document.getElementById('cc1-bal').textContent = fmt(Math.max(STATE.cc1Total - STATE.cc1Paid, 0)) + ' outstanding';
+  document.getElementById('cc1-bar').style.width = cc1Pct + '%';
+  document.getElementById('cc1-paid-lbl').textContent = 'PAID: ' + fmt(STATE.cc1Paid);
+  document.getElementById('cc1-pct').textContent = cc1Pct.toFixed(0) + '% cleared';
+
+  const cc1Months = PLAN.filter(m => m.cc1 > 0);
+  document.getElementById('cc1-burn').innerHTML = cc1Months.map(m => `
+    <div class="cb-wrap" style="flex:1">
+      <div class="cc-bar-m" style="height:50px">
+        <div class="cc-bar-fill" style="height:100%;background:var(--rd)"></div>
+      </div>
+      <div class="cc-bar-lbl">${m.lbl.slice(0,3)}<br><span style="color:var(--rd)">₹12k</span></div>
+    </div>`).join('');
+
+  const cc1pmts = (STATE.ccPayments||[]).filter(p=>p.card===1).slice().reverse();
+  document.getElementById('cc1-history').innerHTML = cc1pmts.length ? cc1pmts.map(p => `
+    <div class="tx">
+      <div class="tx-ic">💳</div>
+      <div style="flex:1">
+        <div class="tx-n">${p.note || 'CC1 Payment'}</div>
+        <div class="tx-d">${p.date}</div>
+      </div>
+      <div class="tx-a" style="color:var(--gn)">-${fmt(p.amt)}</div>
+      <button class="tx-del" onclick="deleteCC(${p.id})">✕</button>
+    </div>`).join('') :
+    '<div style="padding:12px;text-align:center;color:var(--t3);font-size:10px;font-family:var(--mn)">NO PAYMENTS LOGGED YET</div>';
+
+  const cc2Pct = Math.min((STATE.cc2Paid/STATE.cc2Total)*100, 100);
+  document.getElementById('cc2-bal').textContent = fmt(Math.max(STATE.cc2Total - STATE.cc2Paid, 0)) + ' outstanding';
+  document.getElementById('cc2-bar').style.width = cc2Pct + '%';
+  document.getElementById('cc2-paid-lbl').textContent = 'PAID: ' + fmt(STATE.cc2Paid);
+  document.getElementById('cc2-pct').textContent = cc2Pct.toFixed(0) + '% cleared';
+
+  document.getElementById('cc2-schedule').innerHTML = PLAN.filter(m => m.cc2 > 0).map(s => `
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--b1)">
+      <div style="font-family:var(--mn);font-size:10px;color:var(--t2);flex:0 0 70px">${s.lbl}</div>
+      <div style="flex:1"><div class="pb"><div class="pbf" style="width:${(s.cc2/35000)*100}%;background:var(--or)"></div></div></div>
+      <div style="font-family:var(--mn);font-size:10px;color:var(--or)">${fmt(s.cc2)}</div>
+    </div>`).join('');
+
+  const cc2pmts = (STATE.ccPayments||[]).filter(p=>p.card===2).slice().reverse();
+  document.getElementById('cc2-history').innerHTML = cc2pmts.length ? cc2pmts.map(p => `
+    <div class="tx">
+      <div class="tx-ic">💳</div>
+      <div style="flex:1">
+        <div class="tx-n">${p.note || 'CC2 Payment'}</div>
+        <div class="tx-d">${p.date}</div>
+      </div>
+      <div class="tx-a" style="color:var(--gn)">-${fmt(p.amt)}</div>
+      <button class="tx-del" onclick="deleteCC(${p.id})">✕</button>
+    </div>`).join('') :
+    '<div style="padding:12px;text-align:center;color:var(--t3);font-size:10px;font-family:var(--mn)">NO PAYMENTS LOGGED YET</div>';
+
+  const labels = PLAN.map(m => m.lbl);
+  let c1run = 0, c2run = 0;
+  renderChart('cc-combined-chart', labels, [
+    { data: PLAN.map(m => { c1run += m.cc1; return c1run; }), color: 'var(--rd)' },
+    { data: PLAN.map(m => { c2run += m.cc2; return c2run; }), color: 'var(--or)' },
+  ]);
+}
+
+// ===============================================
+//  TAB 5 · EF & BUFFER
+// ===============================================
+function addEF() {
+  const v = parseFloat(document.getElementById('ef-inp').value) || 0;
+  const note = document.getElementById('ef-note').value.trim();
+  if (!v) return;
+  if (!STATE.efLedger) STATE.efLedger = [];
+  STATE.efLedger.push({ id: Date.now(), amt: v, type:'add', date: new Date().toISOString().split('T')[0], note });
+  document.getElementById('ef-inp').value = '';
+  document.getElementById('ef-note').value = '';
+  deriveBalances(); save(); renderSavings();
+}
+
+function useEF() {
+  const v = parseFloat(document.getElementById('ef-ded-inp').value) || 0;
+  const note = document.getElementById('ef-ded-note').value.trim();
+  if (!v) return;
+  if (!STATE.efLedger) STATE.efLedger = [];
+  STATE.efLedger.push({ id: Date.now(), amt: v, type:'deduct', date: new Date().toISOString().split('T')[0], note });
+  document.getElementById('ef-ded-inp').value = '';
+  document.getElementById('ef-ded-note').value = '';
+  deriveBalances(); save(); renderSavings();
+}
+
+function deleteEF(id) {
+  STATE.efLedger = (STATE.efLedger||[]).filter(e => e.id !== id);
+  deriveBalances(); save(); renderSavings();
+}
+
+function addBuffer() {
+  const v = parseFloat(document.getElementById('buf-add-inp').value) || 0;
+  const note = document.getElementById('buf-add-note').value.trim();
+  if (!v) return;
+  if (!STATE.bufLedger) STATE.bufLedger = [];
+  STATE.bufLedger.push({ id: Date.now(), amt: v, type:'add', date: new Date().toISOString().split('T')[0], note });
+  document.getElementById('buf-add-inp').value = '';
+  document.getElementById('buf-add-note').value = '';
+  deriveBalances(); save(); renderSavings();
+}
+
+function useBuffer() {
+  const v = parseFloat(document.getElementById('buf-inp').value) || 0;
+  const note = document.getElementById('buf-note').value.trim();
+  if (!v) return;
+  if (!STATE.bufLedger) STATE.bufLedger = [];
+  STATE.bufLedger.push({ id: Date.now(), amt: v, type:'deduct', date: new Date().toISOString().split('T')[0], note });
+  document.getElementById('buf-inp').value = '';
+  document.getElementById('buf-note').value = '';
+  deriveBalances(); save(); renderSavings();
+}
+
+function deleteBuf(id) {
+  STATE.bufLedger = (STATE.bufLedger||[]).filter(e => e.id !== id);
+  deriveBalances(); save(); renderSavings();
+}
+
+function renderSavings() {
+  const txEF  = STATE.transactions.filter(t => t.cat === 'EF').reduce((s,t) => s+t.amt, 0);
+  const txBuf = STATE.transactions.filter(t => t.cat === 'Buffer').reduce((s,t) => s+t.amt, 0);
+  const efAdj = STATE.efAdjust || 0;
+  const bufAdj = STATE.bufAdjust || 0;
+
+  const efPct = Math.min((STATE.efBalance/EF_TARGET)*100, 100);
+  document.getElementById('ef-balance').textContent = fmt(STATE.efBalance);
+  document.getElementById('ef-bar').style.width = efPct + '%';
+  document.getElementById('ef-pct-lbl').textContent = efPct.toFixed(1) + '% of ₹2L target';
+  const remToTarget = Math.max(EF_TARGET - STATE.efBalance, 0);
+  const lastEF = MDATA[MDATA.length-1].ef || 25000;
+  document.getElementById('ef-months-left').textContent = lastEF > 0 ? Math.ceil(remToTarget/lastEF) + ' months to ₹2L' : '—';
+
+  const efLedger = STATE.efLedger || [];
+  document.getElementById('ef-source-breakdown').innerHTML = `
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:7px;padding:8px 12px;flex:1;min-width:100px">
+        <div class="sl">FROM TRACKER</div>
+        <div style="font-family:var(--mn);font-size:14px;font-weight:700;color:var(--gn)">${fmt(txEF)}</div>
+        <div style="font-size:9px;color:var(--t3)">${(STATE.transactions||[]).filter(t=>t.cat==='EF').length} entries</div>
+      </div>
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:7px;padding:8px 12px;flex:1;min-width:100px">
+        <div class="sl">MANUAL NET</div>
+        <div style="font-family:var(--mn);font-size:14px;font-weight:700;color:${efAdj>=0?'var(--ac)':'var(--rd)'}">${efAdj>=0?'+':''}${fmt(efAdj)}</div>
+        <div style="font-size:9px;color:var(--t3)">${efLedger.length} entries</div>
+      </div>
+    </div>
+    <div class="tx-list" style="max-height:160px;margin-bottom:6px">
+      ${efLedger.length ? efLedger.slice().reverse().map(e => `
+        <div class="tx">
+          <div class="tx-ic">${e.type==='deduct'?'💸':'🛡'}</div>
+          <div style="flex:1">
+            <div class="tx-n">${e.note || (e.type==='deduct'?'EF Withdrawal':'EF Contribution')}</div>
+            <div class="tx-d">${e.date}</div>
+          </div>
+          <div class="tx-a" style="color:${e.type==='deduct'?'var(--rd)':'var(--gn)'}">${e.type==='deduct'?'-':'+'}${fmt(e.amt)}</div>
+          <button class="tx-del" onclick="deleteEF(${e.id})">✕</button>
+        </div>`).join('') :
+        '<div style="padding:8px;text-align:center;color:var(--t3);font-size:10px;font-family:var(--mn)">NO MANUAL ENTRIES</div>'}
+    </div>`;
+
+  const efByMonth = {};
+  STATE.transactions.filter(t=>t.cat==='EF').forEach(t => { efByMonth[t.month] = (efByMonth[t.month]||0) + t.amt; });
+  const efMonthRows = PLAN.map(m => {
+    const logged = efByMonth[m.key] || 0;
+    const planned = m.ef;
+    const pct = planned > 0 ? Math.min((logged/planned)*100, 100) : 0;
+    const status = logged >= planned ? 'var(--gn)' : logged > 0 ? 'var(--go)' : 'var(--t3)';
+    return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(26,34,51,.4)">
+      <div style="font-family:var(--mn);font-size:10px;color:var(--t2);flex:0 0 60px">${m.lbl.slice(0,3)}</div>
+      <div style="flex:1"><div class="pb"><div class="pbf" style="width:${pct}%;background:${status}"></div></div></div>
+      <div style="font-family:var(--mn);font-size:10px;color:${status};flex:0 0 65px;text-align:right">${logged>0?fmt(logged):'—'}</div>
+      <div style="font-size:9px;color:var(--t3);flex:0 0 55px;text-align:right">/ ${fmt(planned)}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('ef-monthly-log').innerHTML = efMonthRows;
+
+  const milestones = [
+    { amt:50000, lbl:'₹50k', col:'var(--gn)' },
+    { amt:100000, lbl:'₹1L', col:'var(--ac)' },
+    { amt:150000, lbl:'₹1.5L', col:'var(--go)' },
+    { amt:200000, lbl:'₹2L Target', col:'var(--pu)' },
+  ];
+  document.getElementById('ef-milestones').innerHTML = milestones.map(m => {
+    const done = STATE.efBalance >= m.amt;
+    const pct = Math.min((STATE.efBalance/m.amt)*100, 100);
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+      <span class="bdg ${done?'bdg-g':'bdg-w'}">${done?'✓':''} ${m.lbl}</span>
+      <div style="flex:1"><div class="pb"><div class="pbf" style="width:${pct}%;background:${m.col}"></div></div></div>
+      <span style="font-size:9px;color:var(--t3);font-family:var(--mn)">${pct.toFixed(0)}%</span>
+    </div>`;
+  }).join('');
+
+  const forecastBuf = MDATA[MDATA.length-1].cumBuf;
+  const bufDisplay = STATE.bufBalance;
+  const bufPct = Math.min((Math.max(bufDisplay,0)/forecastBuf)*100, 100);
+  document.getElementById('buf-balance').textContent = fmt(bufDisplay);
+  document.getElementById('buf-bar').style.width = Math.max(bufPct,0) + '%';
+  document.getElementById('buf-pct-lbl').textContent = Math.max(bufPct,0).toFixed(1) + '% of forecast';
+
+  const bufLedger = STATE.bufLedger || [];
+  document.getElementById('buf-source-breakdown').innerHTML = `
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:7px;padding:8px 12px;flex:1;min-width:100px">
+        <div class="sl">FROM TRACKER</div>
+        <div style="font-family:var(--mn);font-size:14px;font-weight:700;color:var(--go)">${fmt(txBuf)}</div>
+        <div style="font-size:9px;color:var(--t3)">${(STATE.transactions||[]).filter(t=>t.cat==='Buffer').length} entries</div>
+      </div>
+      <div style="background:var(--s2);border:1px solid var(--b1);border-radius:7px;padding:8px 12px;flex:1;min-width:100px">
+        <div class="sl">MANUAL NET</div>
+        <div style="font-family:var(--mn);font-size:14px;font-weight:700;color:${bufAdj>=0?'var(--ac)':'var(--rd)'}">${bufAdj>=0?'+':''}${fmt(bufAdj)}</div>
+        <div style="font-size:9px;color:var(--t3)">${bufLedger.length} entries</div>
+      </div>
+    </div>
+    <div class="tx-list" style="max-height:160px;margin-bottom:6px">
+      ${bufLedger.length ? bufLedger.slice().reverse().map(e => `
+        <div class="tx">
+          <div class="tx-ic">${e.type==='deduct'?'💸':'💰'}</div>
+          <div style="flex:1">
+            <div class="tx-n">${e.note || (e.type==='deduct'?'Buffer Deduction':'Buffer Addition')}</div>
+            <div class="tx-d">${e.date}</div>
+          </div>
+          <div class="tx-a" style="color:${e.type==='deduct'?'var(--rd)':'var(--gn)'}">${e.type==='deduct'?'-':'+'}${fmt(e.amt)}</div>
+          <button class="tx-del" onclick="deleteBuf(${e.id})">✕</button>
+        </div>`).join('') :
+        '<div style="padding:8px;text-align:center;color:var(--t3);font-size:10px;font-family:var(--mn)">NO MANUAL ENTRIES</div>'}
+    </div>`;
+
+  const bufByMonth = {};
+  STATE.transactions.filter(t=>t.cat==='Buffer').forEach(t => { bufByMonth[t.month] = (bufByMonth[t.month]||0) + t.amt; });
+  const bufMonthRows = PLAN.map(m => {
+    const logged = bufByMonth[m.key] || 0;
+    const planned = m.buf;
+    const pct = planned > 0 ? Math.min((logged/planned)*100, 100) : 0;
+    const status = logged >= planned ? 'var(--gn)' : logged > 0 ? 'var(--go)' : 'var(--t3)';
+    return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(26,34,51,.4)">
+      <div style="font-family:var(--mn);font-size:10px;color:var(--t2);flex:0 0 60px">${m.lbl.slice(0,3)}</div>
+      <div style="flex:1"><div class="pb"><div class="pbf" style="width:${pct}%;background:${status}"></div></div></div>
+      <div style="font-family:var(--mn);font-size:10px;color:${status};flex:0 0 65px;text-align:right">${logged>0?fmt(logged):'—'}</div>
+      <div style="font-size:9px;color:var(--t3);flex:0 0 55px;text-align:right">/ ${fmt(planned)}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('buf-monthly-log').innerHTML = bufMonthRows;
+
+  document.getElementById('buf-breakdown').innerHTML = `
+    <div style="font-size:10px;color:var(--t2);line-height:1.8">
+      <div>Phase 1 (Apr–Jun): <strong style="color:var(--go)">₹0 + ₹2,700 + ₹2,700 = ₹5,400</strong></div>
+      <div>Phase 2 (Jul–Sep): <strong style="color:var(--go)">₹12,700 × 3 = ₹38,100</strong></div>
+      <div style="color:var(--rd)">Less: Vehicle purchase (Sep): <strong>-₹50,000</strong></div>
+      <div>Phase 3 (Oct–Dec): <strong style="color:var(--go)">₹12,700 + ₹19,700 + ₹24,700 = ₹57,100</strong></div>
+      <div class="div"></div>
+      <div>Total Net Buffer: <strong style="color:var(--go);font-family:var(--mn)">₹${MDATA[MDATA.length-1].cumBuf.toLocaleString('en-IN')}</strong></div>
+    </div>`;
+
+  const efLoggedArr = PLAN.map(m => efByMonth[m.key] || 0);
+  renderChart('ef-chart', PLAN.map(m=>m.lbl), [
+    { data: MDATA.map(m=>m.ef), color: 'rgba(0,217,104,0.25)' },
+    { data: efLoggedArr, color: 'var(--gn)' }
+  ]);
+
+  const bufLoggedArr = PLAN.map(m => bufByMonth[m.key] || 0);
+  const bufPlanArr = []; let rb = 0;
+  MDATA.forEach(m => { rb += m.buf - m.veh; bufPlanArr.push(Math.max(rb,0)); });
+  renderChart('buf-chart', PLAN.map(m=>m.lbl), [
+    { data: bufPlanArr, color: 'rgba(240,165,0,0.25)' },
+    { data: bufLoggedArr, color: 'var(--go)' }
+  ]);
+
+  const notesEl = document.getElementById('ef-notes');
+  notesEl.innerHTML = PLAN.map(m => {
+    const note = STATE.notes[m.key] || { reduced: false, reason: '' };
+    return `<div class="note-row">
+      <div class="note-m">${m.lbl.slice(0,3)}</div>
+      <div class="note-chk">
+        <input type="checkbox" id="nc-${m.key}" ${note.reduced?'checked':''} onchange="toggleNote('${m.key}',this.checked)"/>
+        <label for="nc-${m.key}">Reduced</label>
+      </div>
+      <input class="note-inp" id="nr-${m.key}" placeholder="Reason for reduction..." value="${note.reason||''}"
+        ${!note.reduced?'disabled':''} oninput="saveNote('${m.key}',this.value)"/>
+    </div>`;
+  }).join('');
+}
+
+function toggleNote(key, checked) {
+  if (!STATE.notes[key]) STATE.notes[key] = { reduced: false, reason: '' };
+  STATE.notes[key].reduced = checked;
+  const inp = document.getElementById('nr-'+key);
+  if (inp) inp.disabled = !checked;
+  save();
+}
+function saveNote(key, val) {
+  if (!STATE.notes[key]) STATE.notes[key] = { reduced: false, reason: '' };
+  STATE.notes[key].reason = val;
+  save();
+}
+
+// ===============================================
+//  TAB 6 · GOALS
+// ===============================================
+function updateBike() {
+  const v = parseFloat(document.getElementById('bike-inp').value) || 0;
+  const note = document.getElementById('bike-note').value.trim();
+  if (!v) return;
+  if (!STATE.bikeLog) STATE.bikeLog = [];
+  STATE.bikeLog.push({ id: Date.now(), amt: v, date: new Date().toISOString().split('T')[0], note });
+  document.getElementById('bike-inp').value = '';
+  document.getElementById('bike-note').value = '';
+  deriveBalances(); save(); renderGoals();
+}
+
+function deleteBikeLog(id) {
+  STATE.bikeLog = (STATE.bikeLog||[]).filter(e => e.id !== id);
+  deriveBalances(); save(); renderGoals();
+}
+
+function updateRE() {
+  const v = parseFloat(document.getElementById('re-inp').value) || 0;
+  const note = document.getElementById('re-note').value.trim();
+  if (!v) return;
+  if (!STATE.reLog) STATE.reLog = [];
+  STATE.reLog.push({ id: Date.now(), amt: v, date: new Date().toISOString().split('T')[0], note });
+  document.getElementById('re-inp').value = '';
+  document.getElementById('re-note').value = '';
+  deriveBalances(); save(); renderGoals();
+}
+
+function deleteRELog(id) {
+  STATE.reLog = (STATE.reLog||[]).filter(e => e.id !== id);
+  deriveBalances(); save(); renderGoals();
+}
+
+function renderGoals() {
+  deriveBalances();
+  const bikePct = Math.min((STATE.bikeAmt / VEHICLE_COST) * 100, 100);
+  document.getElementById('bike-amt').textContent = fmt(STATE.bikeAmt);
+  document.getElementById('bike-pct-lbl').textContent = bikePct.toFixed(0) + '% of ₹50,000';
+  document.getElementById('bike-bar').style.width = bikePct + '%';
+  const readyWrap = document.getElementById('bike-ready-wrap');
+  readyWrap.innerHTML = STATE.bikeAmt >= VEHICLE_COST
+    ? '<div class="goal-ready">🎉 READY TO BUY!</div>'
+    : `<div style="font-size:11px;color:var(--t2)">${fmt(VEHICLE_COST - STATE.bikeAmt)} remaining</div>`;
+
+  const bikeLog = STATE.bikeLog || [];
+  document.getElementById('bike-history').innerHTML = bikeLog.length ? bikeLog.slice().reverse().map(e => `
+    <div class="tx">
+      <div class="tx-ic">🏍</div>
+      <div style="flex:1">
+        <div class="tx-n">${e.note || 'Bike Fund'}</div>
+        <div class="tx-d">${e.date}</div>
+      </div>
+      <div class="tx-a" style="color:var(--go)">+${fmt(e.amt)}</div>
+      <button class="tx-del" onclick="deleteBikeLog(${e.id})">✕</button>
+    </div>`).join('') :
+    '<div style="padding:10px;text-align:center;color:var(--t3);font-size:10px;font-family:var(--mn)">NO ENTRIES YET</div>';
+
+  const rePct = Math.min((STATE.reAmt/500000)*100, 100);
+  document.getElementById('re-amt-disp').textContent = fmt(STATE.reAmt);
+  document.getElementById('re-pct-lbl').textContent = rePct.toFixed(0) + '% of ₹5,00,000';
+  document.getElementById('re-bar').style.width = rePct + '%';
+
+  const reLog = STATE.reLog || [];
+  document.getElementById('re-history').innerHTML = reLog.length ? reLog.slice().reverse().map(e => `
+    <div class="tx">
+      <div class="tx-ic">🏔</div>
+      <div style="flex:1">
+        <div class="tx-n">${e.note || 'RE Himalayan SIP'}</div>
+        <div class="tx-d">${e.date}</div>
+      </div>
+      <div class="tx-a" style="color:var(--pu)">+${fmt(e.amt)}</div>
+      <button class="tx-del" onclick="deleteRELog(${e.id})">✕</button>
+    </div>`).join('') :
+    '<div style="padding:10px;text-align:center;color:var(--t3);font-size:10px;font-family:var(--mn)">NO ENTRIES YET</div>';
+
+  let cBuf = 0;
+  document.getElementById('bike-timeline').innerHTML = MDATA.slice(0,6).map(m => {
+    cBuf += m.buf - m.veh;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b1)">
+      <div style="font-family:var(--mn);font-size:10px;color:var(--t2);flex:0 0 75px">${m.lbl}</div>
+      <div style="flex:0 0 80px;font-family:var(--mn);font-size:10px;color:var(--go)">${fmt(m.buf)}/mo</div>
+      <div style="flex:1"><div class="pb"><div class="pbf" style="width:${Math.min((Math.max(cBuf,0)/VEHICLE_COST)*100,100)}%;background:${cBuf>=VEHICLE_COST?'var(--gn)':'var(--go)'}"></div></div></div>
+      <div style="font-family:var(--mn);font-size:11px;font-weight:700;color:${Math.max(cBuf,0)>=VEHICLE_COST?'var(--gn)':'var(--t2)'};">${fmt(Math.max(cBuf,0))}</div>
+      ${m.veh > 0 ? '<span class="bdg bdg-w">🏍 BUY</span>' : ''}
+      ${cBuf >= VEHICLE_COST && !m.veh ? '<span class="bdg bdg-g">✓ READY</span>' : ''}
+    </div>`;
+  }).join('');
+}
+
+// ===============================================
+//  TAB 7 · FORECAST
+// ===============================================
+function renderForecast() {
+  const labels = PLAN.map(m => m.lbl);
+
+  const m6 = MDATA.slice(0, 6);
+  const m6TotalIncome = m6.length * INCOME;
+  const m6TotalExp = m6.reduce((s,m) => s+m.totalExp, 0);
+  const m6EF = m6[m6.length-1].cumEF;
+  const m6Debt = m6.reduce((s,m) => s+m.cc1+m.cc2, 0);
+
+  document.getElementById('fc-6m-stats').innerHTML = `
+    <div class="stat"><div class="sl">6M Income</div><div class="sv">${fmt(m6TotalIncome)}</div><div class="ss">Apr–Sep</div></div>
+    <div class="stat rd"><div class="sl">6M Expenses</div><div class="sv">${fmt(m6TotalExp)}</div><div class="ss">All costs</div></div>
+    <div class="stat gn"><div class="sl">EF by Sep</div><div class="sv">${fmt(m6EF)}</div><div class="ss">Emergency Fund</div></div>
+    <div class="stat go"><div class="sl">CC Paid (6M)</div><div class="sv">${fmt(m6Debt)}</div><div class="ss">Total debt repaid</div></div>`;
+
+  let prevPhase = '';
+  const tbody = document.getElementById('fc-tbody');
+  tbody.innerHTML = MDATA.map(m => {
+    const ph = getPhase(m.key).lbl;
+    let phRow = '';
+    if (ph !== prevPhase) {
+      phRow = `<tr class="tr-phase"><td colspan="13">${ph.toUpperCase()}</td></tr>`;
+      prevPhase = ph;
+    }
+    const pur = m.purchase || 0;
+    return phRow + `<tr>
+      <td>${m.lbl}</td>
+      <td class="na">${fmt(INCOME)}</td>
+      <td class="nr">${fmt(m.fixed)}</td>
+      <td class="n" style="color:var(--pu)">${fmt(m.core)}</td>
+      <td class="${m.cc1?'nr':'n'}">${m.cc1?fmt(m.cc1):'<span style="color:var(--t3)">—</span>'}</td>
+      <td class="${m.cc2?'n':'n'}" style="color:${m.cc2?'var(--or)':'var(--t3)'}">${m.cc2?fmt(m.cc2):'—'}</td>
+      <td class="n" style="color:${pur?'#ff6b6b':'var(--t3)'}">${pur?fmt(pur):'—'}</td>
+      <td class="nr" style="font-weight:700">${fmt(m.totalExp)}</td>
+      <td class="ng">${fmt(m.ef)}</td>
+      <td class="${m.buf<0?'nr':'ngo'}">${fmt(m.buf)}</td>
+      <td class="ng" style="font-weight:700">${fmt(m.cumEF)}</td>
+      <td class="${m.cumBuf<0?'nr':'ngo'}" style="font-weight:700">${fmt(m.cumBuf)}</td>
+      <td style="font-size:9px;color:var(--ac)">${m.milestone}</td>
+    </tr>`;
+  }).join('');
+
+  const totInc = MDATA.length * INCOME;
+  const totExp = MDATA.reduce((s,m) => s+m.totalExp, 0);
+  const finalEF = MDATA[MDATA.length-1].cumEF;
+  const finalBuf = MDATA[MDATA.length-1].cumBuf;
+  document.getElementById('fc-tbody').innerHTML += `
+    <tr class="tr-total">
+      <td>TOTAL</td>
+      <td class="na">${fmt(totInc)}</td>
+      <td colspan="5"></td>
+      <td class="nr">${fmt(totExp)}</td>
+      <td class="ng">${fmt(finalEF)}</td>
+      <td></td>
+      <td class="ng" style="font-weight:700">${fmt(finalEF)}</td>
+      <td class="ngo" style="font-weight:700">${fmt(finalBuf)}</td>
+      <td></td>
+    </tr>`;
+
+  document.getElementById('fc-6m-detail').innerHTML = `
+    <div style="font-size:11px;color:var(--t2);line-height:2">
+      <div>Total Income: <strong style="color:var(--ac);font-family:var(--mn)">${fmt(m6TotalIncome)}</strong></div>
+      <div>Total Expenses: <strong style="color:var(--rd);font-family:var(--mn)">${fmt(m6TotalExp)}</strong></div>
+      <div>CC1 Repaid (6M): <strong style="color:var(--go);font-family:var(--mn)">${fmt(m6.reduce((s,m)=>s+m.cc1,0))}</strong> (₹83k friend + ₹10k card)</div>
+      <div>CC2 Repaid (6M): <strong style="color:var(--go);font-family:var(--mn)">${fmt(m6.reduce((s,m)=>s+m.cc2,0))}</strong></div>
+      <div>Purchase Fund: <strong style="color:#ff6b6b;font-family:var(--mn)">${fmt(m6.reduce((s,m)=>s+(m.purchase||0),0))}</strong></div>
+      <div>EF Built: <strong style="color:var(--gn);font-family:var(--mn)">${fmt(m6EF)}</strong></div>
+      <div>Vehicle Purchased: <strong style="color:var(--go);font-family:var(--mn)">₹50,000</strong> (Sep)</div>
+    </div>`;
+
+  document.getElementById('fc-ye-detail').innerHTML = `
+    <div style="font-size:11px;color:var(--t2);line-height:2">
+      <div>Total Income: <strong style="color:var(--ac);font-family:var(--mn)">${fmt(totInc)}</strong></div>
+      <div>Total Expenses: <strong style="color:var(--rd);font-family:var(--mn)">${fmt(totExp)}</strong></div>
+      <div>Total Surplus: <strong style="color:var(--gn);font-family:var(--mn)">${fmt(totInc-totExp)}</strong></div>
+      <div>Final EF Balance: <strong style="color:var(--gn);font-family:var(--mn)">${fmt(finalEF)}</strong></div>
+      <div>Net Buffer: <strong style="color:var(--go);font-family:var(--mn)">${fmt(finalBuf)}</strong></div>
+      <div>Total Liquidity: <strong style="color:var(--gn);font-family:var(--mn)">${fmt(finalEF+finalBuf)}</strong></div>
+    </div>`;
+
+  const efArr = MDATA.map(m => m.cumEF);
+  let totalDebtArr = [];
+  let rd = CC1_TOTAL + CC2_TOTAL;
+  MDATA.forEach(m => { rd -= (m.cc1 + m.cc2); totalDebtArr.push(Math.max(rd, 0)); });
+
+  renderChart('fc-ef-debt-chart', labels, [
+    { data: efArr, color: 'var(--gn)' },
+    { data: totalDebtArr, color: 'var(--rd)' },
+  ]);
+  renderChart('fc-surp-chart', labels, [
+    { data: MDATA.map(m => m.totalExp), color: 'var(--rd)' },
+    { data: MDATA.map(m => m.ef + Math.max(m.buf, 0)), color: 'var(--gn)' },
+  ]);
+
+  renderRiskFlags();
+  renderIntelligence();
+  renderForecastNotes();
+}
+
+// ===============================================
+//  EXPORT / IMPORT / RESET
+// ===============================================
+function exportData() {
+  const blob = new Blob([JSON.stringify({ STATE, MDATA, exportDate: new Date().toISOString() }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'CNX_Kay_' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+}
+
+function importData() {
+  document.getElementById('import-file').click();
+}
+
+function handleImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (data.STATE) {
+        STATE = { ...STATE, ...data.STATE };
+        if (!STATE.additionalIncome) STATE.additionalIncome = {};
+        if (!STATE.forecastNotes || !Array.isArray(STATE.forecastNotes)) STATE.forecastNotes = [];
+        if (!STATE.ccPayments  || !Array.isArray(STATE.ccPayments))  STATE.ccPayments  = [];
+        if (!STATE.ccExpenses  || !Array.isArray(STATE.ccExpenses))  STATE.ccExpenses  = [];
+        if (!STATE.efLedger    || !Array.isArray(STATE.efLedger))    STATE.efLedger    = [];
+        if (!STATE.bufLedger   || !Array.isArray(STATE.bufLedger))   STATE.bufLedger   = [];
+        deriveBalances();
+        save();
+        renderOverview();
+        showToast('✅ Data imported successfully!', 'ok', 3000);
+      } else { showToast('❌ Invalid CNX export file.', 'err', 4000); }
+    } catch(err) { showToast('❌ Failed to parse: ' + err.message, 'err', 4000); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function resetData() {
+  if (!confirm('⚠️ Reset ALL data? This cannot be undone.')) return;
+  localStorage.removeItem('cnx_v4');
+  STATE = {
+    transactions:[], cc1Paid:0, cc2Paid:0, ccPayments:[], ccExpenses:[],
+    efAdjust:0, bufAdjust:0, efLedger:[], bufLedger:[],
+    efBalance:0, bufBalance:0,
+    bikeLog:[], reLog:[], bikeAmt:0, reAmt:0,
+    notes:{}, priorities:{p0:0,p1:0,p2:0,p3:0},
+    forecastNotes:[],
+    additionalIncome:{},
+    lastUpdated:0
+  };
+  deriveBalances();
+  renderOverview();
+  showToast('✅ Data reset. Fresh start!', 'ok', 3000);
+}
+
+// ===============================================
+//  FORECAST NOTES & INTELLIGENCE
+// ===============================================
+function addForecastNote() {
+  const inp = document.getElementById('fc-note-inp');
+  const text = inp.value.trim();
+  if (!text) return;
+  if (!STATE.forecastNotes) STATE.forecastNotes = [];
+  STATE.forecastNotes.push({ id: Date.now(), text, date: new Date().toLocaleDateString('en-IN') });
+  inp.value = '';
+  save();
+  renderForecastNotes();
+}
+
+function deleteForecastNote(id) {
+  STATE.forecastNotes = (STATE.forecastNotes||[]).filter(n => n.id !== id);
+  save();
+  renderForecastNotes();
+}
+
+function renderForecastNotes() {
+  const notes = STATE.forecastNotes || [];
+  const el = document.getElementById('fc-notes-list');
+  if (!el) return;
+  if (!notes.length) {
+    el.innerHTML = '<div style="font-size:10px;color:var(--t3);font-family:var(--mn);padding:6px 0">NO NOTES YET</div>';
+    return;
+  }
+  el.innerHTML = notes.slice().reverse().map(n => `
+    <div class="tx" style="align-items:flex-start">
+      <div style="font-size:10px;color:var(--t3);font-family:var(--mn);flex-shrink:0;padding-top:2px">${n.date}</div>
+      <div style="flex:1;font-size:11px;color:var(--t1);line-height:1.5">${n.text}</div>
+      <button class="tx-del" onclick="deleteForecastNote(${n.id})">✕</button>
+    </div>`).join('');
+}
+
+function renderRiskFlags() {
+  const el = document.getElementById('fc-risk-flags');
+  if (!el) return;
+  const flags = [];
+  flags.push({ t:'w', m:'⚠️ April: Buffer only ₹2,700. Tight month. Avoid discretionary spending.' });
+  const expectedEF = MDATA.find(m => m.key === curMonth)?.cumEF || 0;
+  if (STATE.efBalance < expectedEF * 0.8) {
+    flags.push({ t:'r', m:`🚨 EF behind plan. Expected ~${fmt(expectedEF)} by now. Logged: ${fmt(STATE.efBalance)}. Review contributions.` });
+  } else if (STATE.efBalance > 0) {
+    flags.push({ t:'g', m:`✅ EF on track. Logged: ${fmt(STATE.efBalance)} vs plan ${fmt(expectedEF)}.` });
+  }
+  const ccOut = Math.max(((STATE.cc1Total||CC1_TOTAL) + (STATE.cc2Total||CC2_TOTAL)) - STATE.cc1Paid - STATE.cc2Paid, 0);
+  if (ccOut > 100000) flags.push({ t:'r', m:'🚨 CC outstanding > ₹1L. Prioritize debt repayment.' });
+  else if (ccOut > 50000) flags.push({ t:'w', m:`💳 CC outstanding: ${fmt(ccOut)}. On schedule if monthly payments held.` });
+  else if (ccOut === 0) flags.push({ t:'g', m:'🎉 All CC debt cleared! Redirect to EF acceleration.' });
+  flags.push({ t:'b', m:'🏍 September: Buffer must reach ₹50k before vehicle purchase. Monitor monthly.' });
+  flags.push({ t:'b', m:'🚀 Oct onward: Phase 3 unlocks ₹30k/mo EF. EF target (₹2L) achievable by Dec 2026.' });
+  el.innerHTML = flags.map(f => `<div class="alert al-${f.t}" style="margin-bottom:6px">${f.m}</div>`).join('');
+}
+
+function renderIntelligence() {
+  const el = document.getElementById('fc-intelligence');
+  if (!el) return;
+  const totInc = MDATA.length * INCOME;
+  const totExp = MDATA.reduce((s,m) => s+m.totalExp, 0);
+  const totalDebtPaid = CC1_TOTAL + CC2_TOTAL;
+  const finalEF = MDATA[MDATA.length-1].cumEF;
+  const finalBuf = MDATA[MDATA.length-1].cumBuf;
+  const savingsRate = ((finalEF + finalBuf) / totInc * 100).toFixed(1);
+  const debtToInc = (totalDebtPaid / totInc * 100).toFixed(1);
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="background:var(--s2);border-radius:8px;padding:11px;border:1px solid var(--b1)">
+        <div class="sl">SAVINGS RATE</div>
+        <div style="font-family:var(--mn);font-size:18px;font-weight:700;color:var(--gn)">${savingsRate}%</div>
+        <div style="font-size:9px;color:var(--t3)">of annual income</div>
+      </div>
+      <div style="background:var(--s2);border-radius:8px;padding:11px;border:1px solid var(--b1)">
+        <div class="sl">DEBT-TO-INCOME</div>
+        <div style="font-family:var(--mn);font-size:18px;font-weight:700;color:var(--or)">${debtToInc}%</div>
+        <div style="font-size:9px;color:var(--t3)">cleared this year</div>
+      </div>
+      <div style="background:var(--s2);border-radius:8px;padding:11px;border:1px solid var(--b1)">
+        <div class="sl">TOTAL LIQUIDITY</div>
+        <div style="font-family:var(--mn);font-size:18px;font-weight:700;color:var(--ac)">${fmt(finalEF + finalBuf)}</div>
+        <div style="font-size:9px;color:var(--t3)">EF + Buffer by Dec</div>
+      </div>
+      <div style="background:var(--s2);border-radius:8px;padding:11px;border:1px solid var(--b1)">
+        <div class="sl">ANNUAL SURPLUS</div>
+        <div style="font-family:var(--mn);font-size:18px;font-weight:700;color:var(--pu)">${fmt(totInc - totExp)}</div>
+        <div style="font-size:9px;color:var(--t3)">income minus expenses</div>
+      </div>
+    </div>
+    <div class="alert al-b">
+      💡 <strong>Insight:</strong> By clearing ₹1.67L in CC debt AND building ₹${Math.round((finalEF+finalBuf)/1000)}k liquidity on a ₹1.4L/mo income, 
+      this plan achieves a <strong>${savingsRate}% net savings rate</strong> — well above the 20% benchmark. Phase 3 is where wealth building truly begins.
+    </div>`;
+}
+
+// ===============================================
+//  KEYBOARD SHORTCUTS
+// ===============================================
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  const tabs = ['overview','mindmap','tracker','cards','savings','goals','forecast'];
+  const n = parseInt(e.key);
+  if (n >= 1 && n <= 7) {
+    const nb = document.querySelectorAll('.nb')[n-1];
+    if (nb) go(tabs[n-1], nb);
+  }
+});
+
+// ===============================================
+//  INIT
+// ===============================================
+function renderCurrentTab() {
+  const map = { overview:renderOverview, mindmap:renderMindmap, tracker:renderTracker,
+    cards:renderCards, savings:renderSavings, goals:renderGoals, forecast:renderForecast };
+  for (const [t, fn] of Object.entries(map)) {
+    if (document.getElementById('tab-'+t)?.classList.contains('on')) { fn(); return; }
+  }
+  renderOverview();
+}
+
+async function init() {
+  load();
+  // Migrate: remove actualBalance from STATE if it exists (no longer used)
+  if (STATE.actualBalance) delete STATE.actualBalance;
+  deriveBalances();
+  curMonth = '2026-04';
+  document.getElementById('tr-date').value = new Date().toISOString().split('T')[0];
+  const urlInp = document.getElementById('sb-url-inp');
+  const keyInp = document.getElementById('sb-key-inp');
+  if (urlInp) urlInp.value = sbUrl;
+  if (keyInp) keyInp.value = sbKey;
+  renderOverview();
+  setSyncStatus('syncing', 'CONNECTING');
+  try {
+    await pullFromSupabase(false);
+  } catch(e) {
+    setSyncStatus('error', 'OFFLINE');
+  }
+  initRealtimeSDK();
+}
+
+init();
+
+</script>
+</body>
+</html>
